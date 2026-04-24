@@ -51,3 +51,4 @@ HR_JABRI/
 # Temporary files
 *.tmp
 *.bak
+.bob/mcp.old

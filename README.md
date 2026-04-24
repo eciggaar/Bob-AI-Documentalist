@@ -67,12 +67,12 @@ python generate_hr_documents.py
 
 Documents are organized in the repository under:
 ```
-/BOB_LAB/JABRI/[EmployeeID_Name]/[Category]/[Documents]
+/BOB_LAB/DUPONT/[EmployeeID_Name]/[Category]/[Documents]
 ```
 
 Example:
 ```
-/BOB_LAB/JABRI/JAB001_Jade Robin/
+/BOB_LAB/DUPONT/JAB001_Jade Robin/
 ├── 01_Recruitment/
 ├── 02_Employment_Contract/
 ├── 03_Personal_Administration/

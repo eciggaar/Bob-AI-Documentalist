@@ -1,5 +1,6 @@
 {
     "mcpServers": {
+    
         "content-repository": {
             "command": "uvx",
             "args": [
@@ -8,13 +9,14 @@
                 "core-cs-mcp-server"
             ],
             "env": {
-                "USERNAME": "bob-doc-service.fid@t7026",
+                "USERNAME": "",
                 "PASSWORD": "",
                 "SERVER_URL": "https://fncm-dev-demo-emea-10.automationcloud.ibm.com/content-services-graphql/graphql",
-                "OBJECT_STORE": "OS1"
+                "OBJECT_STORE": "OS1",
+                //"ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
+                //"COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
             },
             "alwaysAllow": [
-                "lookup_documents_by_name",
                 "lookup_documents_by_path",
                 "get_document_properties",
                 "list_root_classes",
@@ -22,7 +24,14 @@
                 "get_class_property_descriptions",
                 "determine_class",
                 "create_folder",
-                "get_folder_detail"
+                "get_folder_detail",
+                "get_searchable_property_descriptions",
+                "document_search",
+                "create_document",
+                "get_folder_documents",
+                "repository_object_search",
+                "get_document_text_extract",
+                "update_document_class"
             ]
         }
     }
