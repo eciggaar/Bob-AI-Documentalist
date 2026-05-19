@@ -10,7 +10,7 @@
             "env": {
                 "USERNAME": "your-username",
                 "PASSWORD": "your-password",
-                "SERVER_URL": "https://fncm-dev-demo-emea-10.automationcloud.ibm.com/content-services-graphql/graphql",
+                "SERVER_URL": "https://server/content-services-graphql/graphql",
                 "OBJECT_STORE": "OS1",
                 "ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
                 "COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
@@ -43,7 +43,7 @@
             "env": {
                 "USERNAME": "your-username",
                 "PASSWORD": "your-password",
-                "SERVER_URL": "https://fncm-dev-demo-emea-10.automationcloud.ibm.com/content-services-graphql/graphql",
+                "SERVER_URL": "https://server/content-services-graphql/graphql",
                 "OBJECT_STORE": "OS1",
                 "ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
                 "COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
