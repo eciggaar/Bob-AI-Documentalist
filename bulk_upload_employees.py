@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Bulk upload script for remaining HR_COGNIZANT employees to FileNet repository.
+Bulk upload script for remaining HR employees to FileNet repository.
 This script will upload documents for COG003, COG004, and COG005.
 """
 
@@ -27,8 +27,8 @@ CATEGORIES = [
     "08_Exit"
 ]
 
-BASE_SOURCE_PATH = "HR_COGNIZANT"
-BASE_TARGET_PATH = "/BOB_LAB/COGNIZANT"
+BASE_SOURCE_PATH = "HR"
+BASE_TARGET_PATH = "/BOB_LAB/Santander"
 
 def create_folders_for_employee(employee_name):
     """Create folder structure for an employee"""
@@ -69,7 +69,7 @@ def upload_documents_for_employee(employee_name):
 
 def main():
     print("=" * 60)
-    print("Bulk Upload Script for HR_COGNIZANT Employees")
+    print("Bulk Upload Script for HR Employees")
     print("=" * 60)
     
     for employee in EMPLOYEES:

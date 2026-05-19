@@ -19,6 +19,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.bob/mcp.*
+.bob/test.json
+
 
 # Virtual Environment
 venv/
@@ -31,7 +34,7 @@ env/
 *.swp
 *.swo
 *~
-
+graphql/.env
 # OS
 .DS_Store
 Thumbs.db
@@ -44,6 +47,8 @@ Thumbs.db
 *.pem
 credentials.json
 secrets.json
+.env
+graphql/config.local.json
 
 # HR Documents (if you don't want to commit the generated files)
 HR_JABRI/
@@ -52,3 +57,4 @@ HR_JABRI/
 *.tmp
 *.bak
 .bob/mcp.old
+.bob/mcp.json
