@@ -8,7 +8,10 @@
                 "core-cs-mcp-server"
             ],
             "env": {
-                         "OBJECT_STORE": "OS1",
+                "USERNAME": "your-username",
+                "PASSWORD": "your-password",
+                "SERVER_URL": "https://fncm-dev-demo-emea-10.automationcloud.ibm.com/content-services-graphql/graphql",
+                "OBJECT_STORE": "OS1",
                 "ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
                 "COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
             },
@@ -38,7 +41,10 @@
                 "property-extraction-and-classification-cs-mcp-server"
             ],
             "env": {
-                  "OBJECT_STORE": "OS1",
+                "USERNAME": "your-username",
+                "PASSWORD": "your-password",
+                "SERVER_URL": "https://fncm-dev-demo-emea-10.automationcloud.ibm.com/content-services-graphql/graphql",
+                "OBJECT_STORE": "OS1",
                 "ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
                 "COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
             },
