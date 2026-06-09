@@ -11,9 +11,7 @@
                 "USERNAME": "your-username",
                 "PASSWORD": "your-password",
                 "SERVER_URL": "https://server/content-services-graphql/graphql",
-                "OBJECT_STORE": "OS1",
-                "ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
-                "COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
+                "OBJECT_STORE": "OS1"
             },
             "alwaysAllow": [
                 "lookup_documents_by_name",
@@ -44,9 +42,7 @@
                 "USERNAME": "your-username",
                 "PASSWORD": "your-password",
                 "SERVER_URL": "https://server/content-services-graphql/graphql",
-                "OBJECT_STORE": "OS1",
-                "ECM_CS_XSRF_TOKEN": "a251fb4a-88df-4d9d-b38f-5ce80e603e22",
-                "COOKIE": "ECM-CS-XSRF-Token=a251fb4a-88df-4d9d-b38f-5ce80e603e22"
+                "OBJECT_STORE": "OS1"
             },
             "alwaysAllow": [
                 "list_all_classes",
