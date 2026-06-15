@@ -52,10 +52,13 @@ graphql/config.local.json
 
 # HR Documents (if you don't want to commit the generated files)
 HR_JABRI/
+HR*/
+
+# Audits
+audits/
 
 # Temporary files
 *.tmp
 *.bak
 .bob/mcp.old
-.bob/mcp.json
 .bob/mcp.json
