@@ -12,7 +12,7 @@
 
 mutation CreateHRDocTypeChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document DocType Choice List"
@@ -130,7 +130,7 @@ mutation CreateHRDocTypeChoiceList {
 
 mutation CreateHRDepartmentChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Department Choice List"
@@ -194,7 +194,7 @@ mutation CreateHRDepartmentChoiceList {
 
 mutation CreateHRJobRoleChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Job Role Choice List"
@@ -258,7 +258,7 @@ mutation CreateHRJobRoleChoiceList {
 
 mutation CreateHRLocationChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Location Choice List"
@@ -322,7 +322,7 @@ mutation CreateHRLocationChoiceList {
 
 mutation CreateHRJobStatusChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Job Status Choice List"
@@ -377,7 +377,7 @@ mutation CreateHRJobStatusChoiceList {
 
 mutation CreateHREmploymentTypeChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Employment Type Choice List"
@@ -441,7 +441,7 @@ mutation CreateHREmploymentTypeChoiceList {
 
 mutation CreateHRCurrentStatusChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Current Status Choice List"
@@ -496,7 +496,7 @@ mutation CreateHRCurrentStatusChoiceList {
 
 mutation CreateHRDocumentCategoryChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document Category Choice List"
@@ -578,7 +578,7 @@ mutation CreateHRDocumentCategoryChoiceList {
 
 mutation CreateHRClassDocTypeChoiceList {
   admCreateChoiceList(
-    repositoryIdentifier: "OS2"
+    repositoryIdentifier: "DEMO"
     choiceListProperties: {
       dataType: STRING
       displayName: "HR Document ClassDocType Choice List"
