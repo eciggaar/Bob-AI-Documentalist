@@ -1,0 +1,6 @@
+# Bob AI Documentalist - Python Dependencies
+# Requirements for HR document generation, bulk upload, and GraphQL operations
+
+# Core dependencies
+requests>=2.31.0          # HTTP library for GraphQL API calls
+python-dotenv>=1.0.0      # Environment variable management (optional, for graphql/run_graphql.py)
