@@ -60,5 +60,3 @@ audits/
 # Temporary files
 *.tmp
 *.bak
-.bob/mcp.old
-.bob/mcp.json
