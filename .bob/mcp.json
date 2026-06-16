@@ -1,0 +1,54 @@
+{
+    "mcpServers": {
+        "content-repository": {
+            "command": "uvx",
+            "args": [
+                "--from",
+                "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
+                "core-cs-mcp-server"
+            ],
+            "env": {
+                "USERNAME": "<YOUR_USERNAME>",
+                "PASSWORD": "<YOUR_PASSWORD>",
+                "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+                "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
+            },
+            "alwaysAllow": [
+                "lookup_documents_by_name",
+                "lookup_documents_by_path",
+                "get_document_properties",
+                "list_root_classes",
+                "determine_class",
+                "create_folder",
+                "get_folder_detail",
+                "get_searchable_property_descriptions",
+                "document_search",
+                "create_document",
+                "get_folder_documents",
+                "repository_object_search",
+                "get_document_text_extract",
+                "update_document_class",
+                "update_document_properties"
+            ]
+        },
+        "classification-content-repository": {
+            "command": "uvx",
+            "args": [
+                "--from",
+                "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
+                "property-extraction-and-classification-cs-mcp-server"
+            ],
+            "env": {
+                "USERNAME": "<YOUR_USERNAME>",
+                "PASSWORD": "<YOUR_PASSWORD>",
+                "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+                "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
+            },
+            "alwaysAllow": [
+                "list_all_classes",
+                "property_extraction"
+            ],
+            "disabled": false
+        }
+    }
+}
