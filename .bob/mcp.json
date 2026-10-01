@@ -1,54 +1,76 @@
 {
-    "mcpServers": {
-        "content-repository": {
-            "command": "uvx",
-            "args": [
-                "--from",
-                "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
-                "core-cs-mcp-server"
-            ],
-            "env": {
-                "USERNAME": "<YOUR_USERNAME>",
-                "PASSWORD": "<YOUR_PASSWORD>",
-                "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-                "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
-            },
-            "alwaysAllow": [
-                "lookup_documents_by_name",
-                "lookup_documents_by_path",
-                "get_document_properties",
-                "list_root_classes",
-                "determine_class",
-                "create_folder",
-                "get_folder_detail",
-                "get_searchable_property_descriptions",
-                "document_search",
-                "create_document",
-                "get_folder_documents",
-                "repository_object_search",
-                "get_document_text_extract",
-                "update_document_class",
-                "update_document_properties"
-            ]
-        },
-        "classification-content-repository": {
-            "command": "uvx",
-            "args": [
-                "--from",
-                "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
-                "property-extraction-and-classification-cs-mcp-server"
-            ],
-            "env": {
-                "USERNAME": "<YOUR_USERNAME>",
-                "PASSWORD": "<YOUR_PASSWORD>",
-                "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-                "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
-            },
-            "alwaysAllow": [
-                "list_all_classes",
-                "property_extraction"
-            ],
-            "disabled": false
-        }
+  "mcpServers": {
+    "core-cs-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
+        "core-cs-mcp-server"
+      ],
+      "env": {
+        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
+        "OBJECT_STORE": "OS1",
+        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
+        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
+        "ZENIAM_IAM_GRANT_TYPE": "password",
+        "ZENIAM_IAM_SCOPE": "openid",
+        "ZENIAM_IAM_USER": "cpmanager",
+        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+      }
+    },
+    "property-extraction-cs-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
+        "property-extraction-and-classification-cs-mcp-server"
+      ],
+      "env": {
+        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
+        "OBJECT_STORE": "OS1",
+        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
+        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
+        "ZENIAM_IAM_GRANT_TYPE": "password",
+        "ZENIAM_IAM_SCOPE": "openid",
+        "ZENIAM_IAM_USER": "cpmanager",
+        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+      }
+    },
+    "legal-hold-cs-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
+        "legal-hold-cs-mcp-server"
+      ],
+      "env": {
+        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
+        "OBJECT_STORE": "OS1",
+        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
+        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
+        "ZENIAM_IAM_GRANT_TYPE": "password",
+        "ZENIAM_IAM_SCOPE": "openid",
+        "ZENIAM_IAM_USER": "cpmanager",
+        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+      }
+    },
+    "ai-document-insight-cs-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/ibm-ecm/ibm-content-services-mcp-server",
+        "ai-document-insight-cs-mcp-server"
+      ],
+      "env": {
+        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
+        "OBJECT_STORE": "OS1",
+        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
+        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
+        "ZENIAM_IAM_GRANT_TYPE": "password",
+        "ZENIAM_IAM_SCOPE": "openid",
+        "ZENIAM_IAM_USER": "cpmanager",
+        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+      }
     }
+  }
 }

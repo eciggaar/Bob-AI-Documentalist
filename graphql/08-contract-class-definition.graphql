@@ -1,0 +1,47 @@
+# Contract class definition for Lab 3 misclassification seed.
+# Creates a Document subclass named "Contract" that shares the employee
+# identity property templates (FirstName, LastName, EmployeeID) already
+# defined for HRDocument. The seeded error for employee DUP002 uploads an
+# employment contract to this class instead of HRDocument, and intentionally
+# omits the Department property — making it detectable by Bob during the
+# classification audit.
+
+mutation CreateContractClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "Contract"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Contract"
+          }
+        ]
+      }
+      propertyDefinitions: {
+        modify: [
+          {
+            propertyTemplate: { identifier: "EmployeeID" }
+            isValueRequired: false
+            isHidden: false
+          }
+          {
+            propertyTemplate: { identifier: "FirstName" }
+            isValueRequired: false
+            isHidden: false
+          }
+          {
+            propertyTemplate: { identifier: "LastName" }
+            isValueRequired: false
+            isHidden: false
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}

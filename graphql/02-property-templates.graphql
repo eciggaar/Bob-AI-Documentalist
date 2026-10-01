@@ -12,7 +12,7 @@
 
 mutation CreateFirstNamePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -34,7 +34,7 @@ mutation CreateFirstNamePropertyTemplate {
 
 mutation CreateLastNamePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -56,7 +56,7 @@ mutation CreateLastNamePropertyTemplate {
 
 mutation CreatePersonalIDPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -78,7 +78,7 @@ mutation CreatePersonalIDPropertyTemplate {
 
 mutation CreateBirthdatePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: DATE
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -100,7 +100,7 @@ mutation CreateBirthdatePropertyTemplate {
 
 mutation CreateEmployeeIDPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -122,7 +122,7 @@ mutation CreateEmployeeIDPropertyTemplate {
 
 mutation CreateJobRolePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -136,7 +136,7 @@ mutation CreateJobRolePropertyTemplate {
       }
       symbolicName: "JobRole"
       choiceList: {
-        identifier: "{9E91F690-0000-C3B6-BA23-FCE02C85B061}"
+        identifier: "{A0EEE560-0000-C3B3-9E22-2382F64846A4}"
       }
      
     }
@@ -147,7 +147,7 @@ mutation CreateJobRolePropertyTemplate {
 
 mutation CreateJobFunctionPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -169,7 +169,7 @@ mutation CreateJobFunctionPropertyTemplate {
 
 mutation CreateJobCodePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -191,7 +191,7 @@ mutation CreateJobCodePropertyTemplate {
 
 mutation CreateJobLevelPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -213,7 +213,7 @@ mutation CreateJobLevelPropertyTemplate {
 
 mutation CreateJobStatusPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -227,7 +227,7 @@ mutation CreateJobStatusPropertyTemplate {
       }
       symbolicName: "JobStatus"
       choiceList: {
-        identifier: "{9E91F690-0000-C5A1-B6D7-BA2C8B8C19BC}"
+        identifier: "{A0EEE560-0000-C5B7-BAA3-C640A012851A}"
       }
       
     }
@@ -238,7 +238,7 @@ mutation CreateJobStatusPropertyTemplate {
 
 mutation CreateEmploymentTypePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -252,7 +252,7 @@ mutation CreateEmploymentTypePropertyTemplate {
       }
       symbolicName: "EmploymentType"
       choiceList: {
-        identifier: "{9E91F690-0000-C645-B849-96D946D9F643}"
+        identifier: "{A0EEE570-0000-C196-99D0-5F659493C738}"
       }
      
     }
@@ -263,7 +263,7 @@ mutation CreateEmploymentTypePropertyTemplate {
 
 mutation CreateCurrentStatusPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -277,7 +277,7 @@ mutation CreateCurrentStatusPropertyTemplate {
       }
       symbolicName: "CurrentStatus"
       choiceList: {
-        identifier: "{9E91F690-0000-C7DC-A884-FB270343C313}"
+        identifier: "{A0EEE570-0000-C225-A65C-FE2D0BEFDBBF}"
       }
      
     }
@@ -288,7 +288,7 @@ mutation CreateCurrentStatusPropertyTemplate {
 
 mutation CreateCompanyPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -310,7 +310,7 @@ mutation CreateCompanyPropertyTemplate {
 
 mutation CreateCompanyCodePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -332,7 +332,7 @@ mutation CreateCompanyCodePropertyTemplate {
 
 mutation CreateBusinessUnitPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -354,7 +354,7 @@ mutation CreateBusinessUnitPropertyTemplate {
 
 mutation CreateDivisionPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -376,7 +376,7 @@ mutation CreateDivisionPropertyTemplate {
 
 mutation CreateDepartmentPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -390,7 +390,7 @@ mutation CreateDepartmentPropertyTemplate {
       }
       symbolicName: "Department"
       choiceList: {
-        identifier: "{9E91F690-0000-C215-BD8B-F154CCB8B601}"
+        identifier: "{A0EEE560-0000-C2B3-B7D5-F525F6E24FB0}"
       }
    
     }
@@ -401,7 +401,7 @@ mutation CreateDepartmentPropertyTemplate {
 
 mutation CreateCostCenterPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -423,7 +423,7 @@ mutation CreateCostCenterPropertyTemplate {
 
 mutation CreateLocationPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -437,7 +437,7 @@ mutation CreateLocationPropertyTemplate {
       }
       symbolicName: "Location"
       choiceList: {
-        identifier: "{9E91F690-0000-C4E3-8352-D3E4AAF8FD96}"
+        identifier: "{A0EEE560-0000-C490-A0CA-9F823ED828AB}"
       }
      
     }
@@ -448,7 +448,7 @@ mutation CreateLocationPropertyTemplate {
 
 mutation CreateStartDatePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: DATE
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -470,7 +470,7 @@ mutation CreateStartDatePropertyTemplate {
 
 mutation CreateTerminationDatePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: DATE
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -492,7 +492,7 @@ mutation CreateTerminationDatePropertyTemplate {
 
 mutation CreateSAPEmployeeIDPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -514,7 +514,7 @@ mutation CreateSAPEmployeeIDPropertyTemplate {
 
 mutation CreateSapLinkTriggerPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: BOOLEAN
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -536,7 +536,7 @@ mutation CreateSapLinkTriggerPropertyTemplate {
 
 mutation CreateSapLinkedPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -558,7 +558,7 @@ mutation CreateSapLinkedPropertyTemplate {
 
 mutation CreateSAPDocIdPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -580,7 +580,7 @@ mutation CreateSAPDocIdPropertyTemplate {
 
 mutation CreateSAPDocProtPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -602,7 +602,7 @@ mutation CreateSAPDocProtPropertyTemplate {
 
 mutation CreateSAPCompsPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -624,7 +624,7 @@ mutation CreateSAPCompsPropertyTemplate {
 
 mutation CreateSAPContTypePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -646,7 +646,7 @@ mutation CreateSAPContTypePropertyTemplate {
 
 mutation CreateSAPCompVersionPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -668,7 +668,7 @@ mutation CreateSAPCompVersionPropertyTemplate {
 
 mutation CreateSFLinkTriggerPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: BOOLEAN
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -690,7 +690,7 @@ mutation CreateSFLinkTriggerPropertyTemplate {
 
 mutation CreateSfSalesforceRelationshipsPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: OBJECT
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -714,7 +714,7 @@ mutation CreateSfSalesforceRelationshipsPropertyTemplate {
 
 mutation CreateDocuflowTimestampPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: DATE
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -736,7 +736,7 @@ mutation CreateDocuflowTimestampPropertyTemplate {
 
 mutation CreateDocuflowUsernamePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -758,7 +758,7 @@ mutation CreateDocuflowUsernamePropertyTemplate {
 
 mutation CreateDocTypePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -772,7 +772,7 @@ mutation CreateDocTypePropertyTemplate {
       }
       symbolicName: "DocType"
       choiceList: {
-        identifier: "{9E91F690-0000-C15A-8F91-C10B03D4FA50}"
+        identifier: "{A0EEE560-0000-C1A5-8669-17781FD8045A}"
       }
       
     }
@@ -783,7 +783,7 @@ mutation CreateDocTypePropertyTemplate {
 
 mutation CreateDocumentCategoryPropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -797,7 +797,7 @@ mutation CreateDocumentCategoryPropertyTemplate {
       }
       symbolicName: "DocumentCategory"
       choiceList: {
-        identifier: "{9E91F6A0-0000-C15D-934B-E98EBDAE1C4E}"
+        identifier: "{A0EEE570-0000-C3C2-9B99-D7BC15770248}"
       }
      
     }
@@ -808,7 +808,7 @@ mutation CreateDocumentCategoryPropertyTemplate {
 
 mutation CreateClassDocTypePropertyTemplate {
   admCreatePropertyTemplate(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     dataType: STRING
     propertyTemplateProperties: {
       cardinality: SINGLE
@@ -822,7 +822,7 @@ mutation CreateClassDocTypePropertyTemplate {
       }
       symbolicName: "ClassDocType"
       choiceList: {
-        identifier: "{9E91F6A0-0000-C26B-B1BD-C2A47256561A}"
+        identifier: "{A0EEE570-0000-C427-8948-C8BD6322D486}"
       }
     
     }

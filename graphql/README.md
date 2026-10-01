@@ -4,14 +4,20 @@ This folder contains a staged GraphQL recreation set for the custom [`HRDocument
 
 ## Files
 
-1. [`01-choice-lists.graphql`](01-choice-lists.graphql)  
+1. [`01-choice-lists.graphql`](01-choice-lists.graphql)
    Optional choice lists for business-controlled string fields.
 
-2. [`02-property-templates.graphql`](02-property-templates.graphql)  
+2. [`02-property-templates.graphql`](02-property-templates.graphql)
    Property template creation mutations for all custom HR properties.
 
-3. [`03-class-definition.graphql`](03-class-definition.graphql)  
+3. [`03-class-definition.graphql`](03-class-definition.graphql)
    Final class creation mutation that binds the custom property templates to the `HRDocument` class.
+
+4. [`04-tax-class-definitions.graphql`](04-tax-class-definitions.graphql)
+   Creates 30 Dutch Tax Administration document subclasses (BTW, loonheffingen, vennootschapsbelasting, douane, etc.). Independent — does not depend on files 01 or 02. Includes 5 intentional consolidation-candidate classes for lab exercises.
+
+7. [`07-count-hrdocument-properties.graphql`](07-count-hrdocument-properties.graphql)
+   Query (not a mutation) — retrieves all property definitions on `HRDocument` with their `isSearchable`, `isSystemOwned`, `isHidden`, `dataType`, and `cardinality` fields. Use to verify the total property count and searchable/non-searchable split. Run directly via `curl`; the `run_graphql.py` runner handles mutations only.
 
 ## Runner
 
@@ -26,6 +32,7 @@ Use [`graphql/run_graphql.py`](graphql/run_graphql.py) to execute any staged Gra
    - `python graphql/run_graphql.py graphql/01-choice-lists.graphql`
    - `python graphql/run_graphql.py graphql/02-property-templates.graphql`
    - `python graphql/run_graphql.py graphql/03-class-definition.graphql`
+   - `python graphql/run_graphql.py graphql/04-tax-class-definitions.graphql`
 
 The runner reads credentials from the ignored dotenv file and sends each `mutation` block in sequence to the GraphQL endpoint.
 
@@ -36,6 +43,7 @@ Run the files in this exact order:
 1. [`01-choice-lists.graphql`](01-choice-lists.graphql)
 2. [`02-property-templates.graphql`](02-property-templates.graphql)
 3. [`03-class-definition.graphql`](03-class-definition.graphql)
+4. [`04-tax-class-definitions.graphql`](04-tax-class-definitions.graphql) — can also be run standalone; has no dependency on files 01–02
 
 ## Scope included
 

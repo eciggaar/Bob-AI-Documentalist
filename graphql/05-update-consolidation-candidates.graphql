@@ -1,0 +1,107 @@
+# Update consolidation candidate descriptions - Stage 5
+# Updates the descriptiveText of the 5 consolidation-candidate classes to remove
+# hardcoded consolidation instructions. Descriptions are rewritten in plain Dutch
+# so that overlap with the canonical class is semantically apparent without being
+# stated explicitly. An AI reading both descriptions should infer the redundancy.
+#
+# Runner: python graphql/run_graphql.py graphql/05-update-consolidation-candidates.graphql
+
+mutation UpdateAangifteBTWKwartaalDescription {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteBTWKwartaal"
+    classDefinitionProperties: {
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Kwartaalversie van de periodieke BTW-aangifte ingediend bij de Belastingdienst. Bevat dezelfde opgave van verschuldigde omzetbelasting en aftrekbare voorbelasting als de maandelijkse BTW-aangifte, maar samengesteld over een kwartaaltijdvak."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateCorrectieAangifteLoonheffingenDescription {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "CorrectieAangifteLoonheffingen"
+    classDefinitionProperties: {
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte loonheffingen ingediend ter correctie van onjuistheden in een eerder ingediende aangifte over hetzelfde tijdvak. Bevat de gecorrigeerde opgave van ingehouden loonbelasting, premies volksverzekeringen en premies werknemersverzekeringen."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateVoortaxatieVennootschapsbelastingDescription {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "VoortaxatieVennootschapsbelasting"
+    classDefinitionProperties: {
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Voorlopige aangifte vennootschapsbelasting ingediend op basis van een schatting van de te verwachten belastbare winst over het lopende boekjaar. Wordt na afloop van het boekjaar gevolgd door de definitieve aangifte vennootschapsbelasting."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateMotorrijtuigenbelastingAangifteDescription {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "MotorrijtuigenbelastingAangifte"
+    classDefinitionProperties: {
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte motorrijtuigenbelasting ingediend door de houder van een motorrijtuig. Bevat de opgave van het voertuig, de brandstofsoort en het gewicht op basis waarvan de verschuldigde belasting wordt berekend. Dekt voertuigen die reeds zijn opgenomen in het Nederlandse kentekenregister en periodiek motorrijtuigenbelasting verschuldigd zijn."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateVereenvoudigdeDouaneaangifteDescription {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "VereenvoudigdeDouaneaangifte"
+    classDefinitionProperties: {
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Douaneaangifte ingediend door erkende marktdeelnemers met AEO-status via de vereenvoudigde procedure. Bevat dezelfde gegevens als een standaard douaneaangifte, maar kan worden ingediend met een beperkt gegevensstelsel en achteraf aanvullend worden aangemeld."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}

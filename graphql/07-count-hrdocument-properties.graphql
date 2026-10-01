@@ -1,0 +1,59 @@
+# HRDocument property count query
+# Returns every property definition attached to the HRDocument class so the
+# total count — and system/custom/hidden splits — can be verified.
+# Replace OS1 with the target repository symbolic identifier or GUID.
+#
+# NOTE: isSearchable is not exposed by the admClassDefinition GraphQL surface
+# in this tenant. Use the MCP get_class_property_descriptions tool for
+# searchable vs non-searchable counts (baseline: 91 searchable / 17 not).
+#
+# Run via the helper script below (run_graphql.py handles mutations only):
+#
+#   .venv/bin/python3 - <<'EOF'
+#   import json, sys, base64, urllib.request
+#   from pathlib import Path
+#
+#   def parse_dotenv(p):
+#       vals = {}
+#       for l in p.read_text().splitlines():
+#           l = l.strip()
+#           if not l or l.startswith("#") or "=" not in l: continue
+#           k, v = l.split("=", 1)
+#           vals[k.strip()] = v.strip().strip('"').strip("'")
+#       return vals
+#
+#   cfg = parse_dotenv(next(p for p in [Path("graphql/.env"), Path(".env")] if p.exists()))
+#   creds = base64.b64encode(f"{cfg['USERNAME']}:{cfg['PASSWORD']}".encode()).decode()
+#   body  = json.dumps({"query": Path("graphql/07-count-hrdocument-properties.graphql")
+#                       .read_text()}).encode()
+#   req = urllib.request.Request(cfg["SERVER_URL"], data=body, method="POST",
+#         headers={"Content-Type": "application/json", "Authorization": f"Basic {creds}"})
+#   data  = json.loads(urllib.request.urlopen(req, timeout=60).read())
+#   props = data["data"]["admClassDefinition"]["propertyDefinitions"]
+#   total = len(props)
+#   print(f"Total : {total}")
+#   print(f"System: {sum(1 for p in props if p['isSystemOwned'])}")
+#   print(f"Custom: {sum(1 for p in props if not p['isSystemOwned'])}")
+#   print(f"Hidden: {sum(1 for p in props if p['isHidden'])}")
+#   EOF
+#
+# Expected baseline (live GraphQL, 2025):
+#   Total: 108  |  System: 63  |  Custom: 45  |  Hidden: 42  |  Visible: 66
+
+query CountHRDocumentProperties {
+  admClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "HRDocument"
+  ) {
+    symbolicName
+    displayName
+    propertyDefinitions {
+      symbolicName
+      displayName
+      dataType
+      cardinality
+      isSystemOwned
+      isHidden
+    }
+  }
+}

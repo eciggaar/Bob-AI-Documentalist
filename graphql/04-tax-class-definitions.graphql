@@ -1,0 +1,919 @@
+# Aangifte en fiscale documentklassen - Stage 4
+# Maakt 30 documentsubklassen aan voor het Nederlandse belasting- en douanedomein.
+# Deze klassen vertegenwoordigen een realistische repository-toestand voor
+# laboefeningen: vijf klassen zijn bewust aangemaakt als duplicaat of
+# consolidatiekandiaat, zodat de AI Documentalist ze kan identificeren.
+#
+# Uitvoeringsvolgorde: uitvoeren NA voltooiing van 01, 02 en 03.
+# Kan ook zelfstandig worden uitgevoerd zonder afhankelijkheid van de
+# keuzenlijsten of eigenschapstemplates uit bestanden 01 en 02.
+# Runner: python graphql/run_graphql.py graphql/04-tax-class-definitions.graphql
+#
+# Consolidatiekandidaten (bewust opgenomen):
+#   AangifteBTWKwartaal              → samenvoegen met AangifteBTW; Periode-eigenschap toevoegen
+#   CorrectieAangifteLoonheffingen   → samenvoegen met AangifteLoonheffingen; IsCorrectie boolean toevoegen
+#   VoortaxatieVennootschapsbelasting → samenvoegen met AangifteVennootschapsbelasting; AanslagType toevoegen
+#   VereenvoudigdeDouaneaangifte     → samenvoegen met Douaneaangifte; AangifteType-eigenschap toevoegen
+#   MotorrijtuigenbelastingAangifte  → mogelijk redundant of legacy; gebruiksanalyse vereist
+
+# ---------------------------------------------------------------------------
+# BTW-AANGIFTEN (4 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateAangifteBTWClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteBTW"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "BTW Aangifte"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Periodieke BTW-aangifte ingediend bij de Belastingdienst. Bevat de opgave van verschuldigde omzetbelasting en aftrekbare voorbelasting over een belastingtijdvak (maand, kwartaal of jaar)."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateAangifteBTWKwartaalClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteBTWKwartaal"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "BTW Aangifte Kwartaal"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Kwartaalversie van de periodieke BTW-aangifte ingediend bij de Belastingdienst. Bevat dezelfde opgave van verschuldigde omzetbelasting en aftrekbare voorbelasting als de maandelijkse BTW-aangifte, maar samengesteld over een kwartaaltijdvak."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateBTWTeruggaafVerzoekClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "BTWTeruggaafVerzoek"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "BTW Teruggaaf Verzoek"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Verzoek tot teruggaaf van betaalde BTW ingediend bij de Belastingdienst. Van toepassing wanneer de aftrekbare voorbelasting de verschuldigde BTW in een tijdvak overstijgt."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateBTWCorrectiemeldingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "BTWCorrectiemelding"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "BTW Correctiemelding"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Melding ter correctie van een eerder ingediende BTW-aangifte. Wordt gebruikt bij ontdekking van fouten of wijzigingen in omzet- of voorbelastingbedragen na de oorspronkelijke indiening."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# INKOMSTENBELASTING (2 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateAangifteInkomstenbelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteInkomstenbelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aangifte Inkomstenbelasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Jaarlijkse aangifte inkomstenbelasting voor natuurlijke personen. Bevat de opgave van inkomen uit werk en woning (box 1), aanmerkelijk belang (box 2) en sparen en beleggen (box 3) conform de Wet inkomstenbelasting 2001."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateVoorlopigAanslagIBClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "VoorlopigAanslagIB"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Voorlopige Aanslag Inkomstenbelasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Voorlopige aanslag inkomstenbelasting opgelegd door de Belastingdienst op basis van een schatting van het te verwachten inkomen. Kan gedurende het jaar worden herzien en wordt na indiening van de definitieve aangifte verrekend."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# LOONHEFFINGEN (3 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateAangifteLoonheffingenClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteLoonheffingen"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aangifte Loonheffingen"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Periodieke aangifte loonheffingen door de inhoudingsplichtige werkgever. Bevat de opgave van ingehouden loonbelasting, premies volksverzekeringen, premies werknemersverzekeringen en de inkomensafhankelijke bijdrage Zorgverzekeringswet per werknemer."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateCorrectieAangifteLoonheffingenClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "CorrectieAangifteLoonheffingen"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Correctie Aangifte Loonheffingen"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte loonheffingen ingediend ter correctie van onjuistheden in een eerder ingediende aangifte over hetzelfde tijdvak. Bevat de gecorrigeerde opgave van ingehouden loonbelasting, premies volksverzekeringen en premies werknemersverzekeringen."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateLoonbelastingVerklaringClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "LoonbelastingVerklaring"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Loonbelasting Verklaring"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Verklaring inzake ingehouden loonbelasting en premies verstrekt aan werknemers of derden. Bevat een overzicht van het fiscaal loon en de ingehouden bedragen over een aaneengesloten periode."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# VENNOOTSCHAPSBELASTING (2 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateAangifteVennootschapsbelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteVennootschapsbelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aangifte Vennootschapsbelasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Jaarlijkse aangifte vennootschapsbelasting voor belastingplichtige lichamen zoals besloten vennootschappen en naamloze vennootschappen. Bevat de opgave van belastbare winst, aftrekposten en de berekening van de verschuldigde belasting conform de Wet op de vennootschapsbelasting 1969."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateVoortaxatieVennootschapsbelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "VoortaxatieVennootschapsbelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Voortaxatie Vennootschapsbelasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Voorlopige aangifte vennootschapsbelasting ingediend op basis van een schatting van de te verwachten belastbare winst over het lopende boekjaar. Wordt na afloop van het boekjaar gevolgd door de definitieve aangifte vennootschapsbelasting."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# OVERIGE BELASTINGEN (4 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateAangifteDividendbelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteDividendbelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aangifte Dividendbelasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte dividendbelasting ingediend door het uitkerende lichaam bij de Belastingdienst. Verplicht gesteld bij uitkering van dividend aan aandeelhouders; bevat de berekening en afdracht van de ingehouden dividendbelasting."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateMotorrijtuigenbelastingAangifteClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "MotorrijtuigenbelastingAangifte"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Motorrijtuigenbelasting Aangifte"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte motorrijtuigenbelasting ingediend door de houder van een motorrijtuig. Bevat de opgave van het voertuig, de brandstofsoort en het gewicht op basis waarvan de verschuldigde belasting wordt berekend. Dekt voertuigen die reeds zijn opgenomen in het Nederlandse kentekenregister en periodiek motorrijtuigenbelasting verschuldigd zijn."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateAangifteBPMClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteBPM"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aangifte BPM"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte belasting van personenauto's en motorrijwielen ingediend bij registratie van een nieuw of geimporteerd voertuig in het Nederlandse kentekenregister. Berekend op basis van de CO2-uitstoot en de catalogusprijs van het voertuig."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateAangifteSuccessieRechtClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AangifteSuccessierecht"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aangifte Successierecht"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Aangifte erfbelasting of schenkbelasting ingediend bij de Belastingdienst na overlijden of schenking. Bevat de opgave van de verkregen nalatenschap of schenking en de berekening van de verschuldigde belasting op basis van de Successiewet 1956."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# NALEVING EN CONTROLE (6 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateBelastingControleRapportClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "BelastingControleRapport"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Belasting Controle Rapport"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Rapport opgesteld door de Belastingdienst of een externe accountant na afloop van een boekenonderzoek of belastingcontrole. Bevat de bevindingen, geconstateerde afwijkingen, opgelegde correcties en eventuele bestuurlijke boetes."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateFiscaalAdviesrapportClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "FiscaalAdviesrapport"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Fiscaal Adviesrapport"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Adviesrapport opgesteld door een fiscalist of belastingadviseur. Bevat fiscale analyses, risicobeoordeling en aanbevelingen voor belastingplanning, structurering of naleving van fiscale wet- en regelgeving."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateAanslagBiljetClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "AanslagBiljet"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Aanslagbiljet"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Officieel aanslagbiljet verzonden door de Belastingdienst met de vastgestelde definitieve belastingaanslag. Vermeldt het te betalen of te ontvangen bedrag na verwerking van de ingediende aangifte en eventuele correcties."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateBezwaarschriftBelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "BezwaarschriftBelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Bezwaarschrift Belasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Formeel bezwaarschrift ingediend bij de Belastingdienst tegen een belastingaanslag of beschikking. Onderdeel van de wettelijke bezwaar- en beroepsprocedure op grond van de Algemene wet bestuursrecht."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateBeroepschriftBelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "BeroepschriftBelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Beroepschrift Belasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Beroepschrift ingediend bij de belastingkamer van de rechtbank na gehele of gedeeltelijke afwijzing van een bezwaarschrift. Vertegenwoordigt de volgende stap in de fiscale rechtsgang na de bezwaarprocedure."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateFiscaalRulingDocumentClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "FiscaalRulingDocument"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Fiscaal Ruling Document"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Vastlegging van een fiscale ruling of Advance Tax Ruling afgegeven door de Belastingdienst. Biedt de belastingplichtige voorafgaande zekerheid over de fiscale behandeling van een voorgenomen transactie of structuur."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# FINANCIELE VERSLAGGEVING (3 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateJaarrekeningDocumentClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "JaarrekeningDocument"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Jaarrekening Document"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Document behorende bij de jaarrekening van een rechtspersoon opgesteld conform Titel 9 van Boek 2 van het Burgerlijk Wetboek. Omvat de balans, de winst- en verliesrekening, het kasstroomoverzicht en de bijbehorende toelichtingen."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateKwartaalrapportBelastingClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "KwartaalrapportBelasting"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Kwartaalrapport Belasting"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Interne kwartaalrapportage van belastingposities, lopende verplichtingen en verwachte afdrachten. Wordt gebruikt voor fiscale planning, liquiditeitsbeheer en rapportage aan het management."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateWinstEnVerliesrekeningClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "WinstEnVerliesrekening"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Winst- en Verliesrekening"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Winst- en verliesrekening als zelfstandig document of als bijlage bij de aangifte vennootschapsbelasting. Geeft een getrouw beeld van de baten, lasten en het resultaat van een onderneming over een boekjaar."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+# ---------------------------------------------------------------------------
+# DOUANE EN HANDEL (6 klassen)
+# ---------------------------------------------------------------------------
+
+mutation CreateDouaneaangifteClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "Douaneaangifte"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Douaneaangifte"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Standaard douaneaangifte voor de in- of uitvoer van goederen conform het Douanewetboek van de Unie. Bevat de goederenomschrijving, douanewaarde, land van oorsprong en de toepasselijke douaneregeling."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateVereenvoudigdeDouaneaangifteClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "VereenvoudigdeDouaneaangifte"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Vereenvoudigde Douaneaangifte"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Douaneaangifte ingediend door erkende marktdeelnemers met AEO-status via de vereenvoudigde procedure. Bevat dezelfde gegevens als een standaard douaneaangifte, maar kan worden ingediend met een beperkt gegevensstelsel en achteraf aanvullend worden aangemeld."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateInvoerAangifteClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "InvoerAangifte"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Invoer Aangifte"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Douaneaangifte voor het in het vrije verkeer brengen van goederen die worden ingevoerd vanuit landen buiten de Europese Unie. Verplicht gesteld voor de berekening en afdracht van van toepassing zijnde douanerechten en invoer-BTW."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateUitvoerAangifteClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "UitvoerAangifte"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Uitvoer Aangifte"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Douaneaangifte voor de definitieve uitvoer van goederen naar landen buiten de Europese Unie. Vereist voor exportcontrole, het verkrijgen van uitvoerattest en teruggaaf van BTW en accijnzen."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateTransitDocumentClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "TransitDocument"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Transit Document"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Begeleidend document voor de douaneregeling extern of intern douanevervoer conform Titel VII van het Douanewetboek van de Unie. Staat toe dat goederen onder schorsing van douanerechten door meerdere landen worden vervoerd."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation CreateOrigineVerklaringClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "OrigineVerklaring"
+      displayNames: {
+        replace: [
+          {
+            localeName: "en-us"
+            localizedText: "Origine Verklaring"
+          }
+        ]
+      }
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Certificaat of verklaring van oorsprong van goederen afgegeven door de bevoegde autoriteit of de exporteur. Vereist voor toepassing van preferentiele douanetarieven bij invoer in of uitvoer naar landen met een preferentieel handelsakkoord met de Europese Unie."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}

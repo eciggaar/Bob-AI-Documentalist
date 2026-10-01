@@ -6,7 +6,7 @@
 
 mutation CreateHRDocumentClass {
   admCreateClassDefinition(
-    repositoryIdentifier: "DEMO"
+    repositoryIdentifier: "OS1"
     superclassIdentifier: "Document"
     classDefinitionProperties: {
       symbolicName: "HRDocument"

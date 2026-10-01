@@ -1315,13 +1315,13 @@ Examples:
     if not args.dry_run:
         print("Next steps:")
         if args.seed_misclassifications:
-            print(f"  1. Open Lab2_Generate_Sample_Content.md and follow Scene 3-4 to upload documents.")
-            print(f"  2. Tell Bob: 'Upload HR documents from HR_{lab_user}/ — my namespace is {lab_user}'")
-            print(f"  3. After upload, proceed to Lab3_Review_and_Reclassify.md.")
+            print(f"  1. Click Next to continue — you will learn about document properties first.")
+            print(f"  2. The following steps will guide you through uploading the documents to the repository.")
+            print(f"  3. After upload, proceed to the review and reclassify lab.")
             print(f"  4. Bob will need to find and fix {total_seeded} misclassified documents in /BOB_LAB/{lab_user}/")
         else:
-            print(f"  1. Open Lab2_Generate_Sample_Content.md and follow Scene 3-4 to upload documents.")
-            print(f"  2. Tell Bob: 'Upload HR documents from HR_{lab_user}/ — my namespace is {lab_user}'")
+            print(f"  1. Click Next to continue — you will learn about document properties first.")
+            print(f"  2. The following steps will guide you through uploading the documents to the repository.")
 
 
 if __name__ == "__main__":

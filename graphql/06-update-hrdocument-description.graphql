@@ -1,0 +1,26 @@
+# Update HRDocument class description - Stage 6
+# Sets the descriptiveText of the HRDocument class to a plain Dutch description
+# reflecting the class purpose based on its known properties (employee identity,
+# job attributes, organisational structure, SAP/Salesforce integration fields).
+#
+# Runner: python graphql/run_graphql.py graphql/06-update-hrdocument-description.graphql
+
+mutation UpdateHRDocumentDescription {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "HRDocument"
+    classDefinitionProperties: {
+      descriptiveTexts: {
+        replace: [
+          {
+            localeName: "nl-nl"
+            localizedText: "Personeelsdocument behorende bij het HR-dossier van een medewerker. Omvat documenten gerelateerd aan de arbeidsrelatie, zoals arbeidscontracten, beoordelingen, verlofregistraties, opleidingscertificaten en correspondentie met de medewerker."
+          }
+        ]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
