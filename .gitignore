@@ -50,11 +50,11 @@ secrets.json
 graphql/config.local.json
 
 # HR Documents (if you don't want to commit the generated files)
-HR_JABRI/
-HR*/
+/HR*/
 
-# Audits
-audits/
+# Audits & Reports
+/audits/
+/reports/
 
 # Temporary files
 *.tmp
