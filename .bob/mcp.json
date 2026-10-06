@@ -8,14 +8,10 @@
         "core-cs-mcp-server"
       ],
       "env": {
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1",
-        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
-        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
-        "ZENIAM_IAM_GRANT_TYPE": "password",
-        "ZENIAM_IAM_SCOPE": "openid",
-        "ZENIAM_IAM_USER": "cpmanager",
-        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     },
     "property-extraction-cs-mcp-server": {
@@ -26,14 +22,10 @@
         "property-extraction-and-classification-cs-mcp-server"
       ],
       "env": {
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1",
-        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
-        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
-        "ZENIAM_IAM_GRANT_TYPE": "password",
-        "ZENIAM_IAM_SCOPE": "openid",
-        "ZENIAM_IAM_USER": "cpmanager",
-        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     },
     "legal-hold-cs-mcp-server": {
@@ -44,14 +36,10 @@
         "legal-hold-cs-mcp-server"
       ],
       "env": {
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1",
-        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
-        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
-        "ZENIAM_IAM_GRANT_TYPE": "password",
-        "ZENIAM_IAM_SCOPE": "openid",
-        "ZENIAM_IAM_USER": "cpmanager",
-        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     },
     "ai-document-insight-cs-mcp-server": {
@@ -62,14 +50,10 @@
         "ai-document-insight-cs-mcp-server"
       ],
       "env": {
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1",
-        "ZENIAM_ZEN_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/v1/preauth/validateAuth",
-        "ZENIAM_IAM_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/idprovider/v1/auth/identitytoken",
-        "ZENIAM_IAM_GRANT_TYPE": "password",
-        "ZENIAM_IAM_SCOPE": "openid",
-        "ZENIAM_IAM_USER": "cpmanager",
-        "ZENIAM_IAM_PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     }
   }
