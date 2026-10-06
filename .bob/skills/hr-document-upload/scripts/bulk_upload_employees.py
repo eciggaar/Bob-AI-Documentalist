@@ -84,45 +84,23 @@ def check_seeded_error(employee_id, filename, seeded_errors):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def load_mcp_config():
-    """Load ZenIAM connection config from .bob/mcp.json."""
+    """Load Basic Auth connection config from .bob/mcp.json."""
     mcp_path = Path('.bob/mcp.json')
     if not mcp_path.exists():
         return None
     try:
         env = json.loads(mcp_path.read_text())['mcpServers']['core-cs-mcp-server']['env']
         return {
-            'SERVER_URL':    env['SERVER_URL'],
-            'OBJECT_STORE':  env['OBJECT_STORE'],
-            'ZEN_URL':       env['ZENIAM_ZEN_URL'],
-            'IAM_URL':       env['ZENIAM_IAM_URL'],
-            'IAM_GRANT_TYPE':env['ZENIAM_IAM_GRANT_TYPE'],
-            'IAM_SCOPE':     env['ZENIAM_IAM_SCOPE'],
-            'IAM_USER':      env['ZENIAM_IAM_USER'],
-            'IAM_PASSWORD':  env['ZENIAM_IAM_PASSWORD'],
+            'SERVER_URL':   env['SERVER_URL'],
+            'OBJECT_STORE': env['OBJECT_STORE'],
+            'USERNAME':     env['USERNAME'],
+            'PASSWORD':     env['PASSWORD'],
         }
     except Exception:
         return None
 
 
-def get_bearer_token(cfg):
-    """Exchange username/password for a ZenIAM Bearer token."""
-    iam = requests.post(
-        cfg['IAM_URL'],
-        data={'grant_type': cfg['IAM_GRANT_TYPE'], 'username': cfg['IAM_USER'],
-              'password': cfg['IAM_PASSWORD'], 'scope': cfg['IAM_SCOPE']},
-        verify=False,
-    )
-    iam.raise_for_status()
-    zen = requests.get(
-        cfg['ZEN_URL'],
-        headers={'iam-token': iam.json()['access_token'], 'username': cfg['IAM_USER']},
-        verify=False,
-    )
-    zen.raise_for_status()
-    return zen.json()['accessToken']
-
-
-def fetch_existing_doc_names(cfg, token, folder_path):
+def fetch_existing_doc_names(cfg, folder_path):
     """
     Return a set of document names already filed under folder_path in the
     repository. Matches the stem of local .txt filenames. Returns empty set
@@ -143,7 +121,8 @@ def fetch_existing_doc_names(cfg, token, folder_path):
         resp = requests.post(
             cfg['SERVER_URL'],
             json={'query': query, 'variables': {'repo': cfg['OBJECT_STORE'], 'folder': folder_path}},
-            headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'},
+            auth=(cfg['USERNAME'], cfg['PASSWORD']),
+            headers={'Content-Type': 'application/json'},
             verify=False,
             timeout=15,
         )
@@ -185,13 +164,8 @@ def generate_upload_plan(lastname):
 
     # ── connect to repository ─────────────────────────────────────────────────
     cfg = load_mcp_config()
-    token = None
     if cfg:
-        try:
-            token = get_bearer_token(cfg)
-            print("  🔑 Repository connection established — checking existing documents.")
-        except Exception as e:
-            print(f"  ⚠️  Could not connect to repository ({e}). All documents will be included.")
+        print("  🔑 Repository connection established — checking existing documents.")
     else:
         print("  ⚠️  .bob/mcp.json not found. All documents will be included.")
 
@@ -226,8 +200,8 @@ def generate_upload_plan(lastname):
             # Fetch document names already in this repository folder
             repo_folder = f"{base_target_path}/{employee_name}/{category}"
             existing_names = set()
-            if token:
-                existing_names = fetch_existing_doc_names(cfg, token, repo_folder)
+            if cfg:
+                existing_names = fetch_existing_doc_names(cfg, repo_folder)
 
             new_docs = []
             for doc_file in sorted(category_path.glob("*.txt")):

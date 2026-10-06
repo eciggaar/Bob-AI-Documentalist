@@ -18,7 +18,7 @@ from pathlib import Path
 from datetime import datetime
 
 def load_mcp_config():
-    """Load MCP server configuration from .bob/mcp.json"""
+    """Load Basic Auth configuration from .bob/mcp.json."""
     mcp_config_path = Path('.bob/mcp.json')
 
     if not mcp_config_path.exists():
@@ -30,48 +30,17 @@ def load_mcp_config():
         with open(mcp_config_path, 'r') as f:
             config = json.load(f)
 
-        # Extract core-cs-mcp-server config (ZenIAM auth)
         env = config['mcpServers']['core-cs-mcp-server']['env']
 
         return {
-            'SERVER_URL': env['SERVER_URL'],
+            'SERVER_URL':   env['SERVER_URL'],
             'OBJECT_STORE': env['OBJECT_STORE'],
-            'ZEN_URL': env['ZENIAM_ZEN_URL'],
-            'IAM_URL': env['ZENIAM_IAM_URL'],
-            'IAM_GRANT_TYPE': env['ZENIAM_IAM_GRANT_TYPE'],
-            'IAM_SCOPE': env['ZENIAM_IAM_SCOPE'],
-            'IAM_USER': env['ZENIAM_IAM_USER'],
-            'IAM_PASSWORD': env['ZENIAM_IAM_PASSWORD'],
+            'USERNAME':     env['USERNAME'],
+            'PASSWORD':     env['PASSWORD'],
         }
     except Exception as e:
         print(f"❌ Error loading MCP config: {e}")
         sys.exit(1)
-
-
-def get_bearer_token(config):
-    """Obtain a ZenIAM Bearer token."""
-    # Step 1: exchange username/password for an IAM token
-    iam_resp = requests.post(
-        config['IAM_URL'],
-        data={
-            'grant_type': config['IAM_GRANT_TYPE'],
-            'username': config['IAM_USER'],
-            'password': config['IAM_PASSWORD'],
-            'scope': config['IAM_SCOPE'],
-        },
-        verify=False,
-    )
-    iam_resp.raise_for_status()
-    iam_token = iam_resp.json()['access_token']
-
-    # Step 2: exchange IAM token for a Zen token
-    zen_resp = requests.get(
-        config['ZEN_URL'],
-        headers={'iam-token': iam_token, 'username': config['IAM_USER']},
-        verify=False,
-    )
-    zen_resp.raise_for_status()
-    return zen_resp.json()['accessToken']
 
 
 # Load configuration at module level
@@ -79,11 +48,10 @@ MCP_CONFIG = load_mcp_config()
 
 
 def create_graphql_session():
-    """Create authenticated session for GraphQL using ZenIAM Bearer token."""
-    token = get_bearer_token(MCP_CONFIG)
+    """Create authenticated session for GraphQL using HTTP Basic Auth."""
     session = requests.Session()
+    session.auth = (MCP_CONFIG['USERNAME'], MCP_CONFIG['PASSWORD'])
     session.headers.update({
-        'Authorization': f'Bearer {token}',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     })
@@ -252,7 +220,7 @@ def upload_document_graphql(session, doc_info):
         response = requests.post(
             MCP_CONFIG['SERVER_URL'],
             files=files,
-            headers={'Authorization': session.headers.get('Authorization')},
+            auth=(MCP_CONFIG['USERNAME'], MCP_CONFIG['PASSWORD']),
             verify=False,
         )
         result = response.json()
