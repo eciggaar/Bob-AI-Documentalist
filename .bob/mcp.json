@@ -8,10 +8,10 @@
         "core-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "cpmanager",
-        "PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO",
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     },
     "property-extraction-cs-mcp-server": {
@@ -22,10 +22,10 @@
         "property-extraction-and-classification-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "cpmanager",
-        "PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO",
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     },
     "legal-hold-cs-mcp-server": {
@@ -36,10 +36,10 @@
         "legal-hold-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "cpmanager",
-        "PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO",
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     },
     "ai-document-insight-cs-mcp-server": {
@@ -50,10 +50,10 @@
         "ai-document-insight-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "cpmanager",
-        "PASSWORD": "zePkU-AhQHG-zvSNQ-rIVBO",
-        "SERVER_URL": "https://cpd-cp4ba.apps.itz-cjxoc4.infra01-lb.fra02.techzone.ibm.com/content-services-graphql/graphql",
-        "OBJECT_STORE": "OS1"
+        "USERNAME": "<YOUR_USERNAME>",
+        "PASSWORD": "<YOUR_PASSWORD>",
+        "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
+        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
       }
     }
   }
