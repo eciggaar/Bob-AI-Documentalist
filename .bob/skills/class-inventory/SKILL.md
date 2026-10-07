@@ -34,23 +34,28 @@ Assign every item in the list to **exactly one** domain using these explicit rul
 ## Step 3 — Strict Count & Reconciliation (Pre-Output Verification)
 
 Before rendering the output:
-1. Count the exact number of entries placed in each group:
+1. Parse the JSON array returned by `list_all_classes` into 4 disjoint arrays: `hr_classes`, `contract_classes`, `tax_classes`, `sys_classes`.
+2. Determine exact counts by evaluating `len()` on each array:
    - `hr_count = len(hr_classes)`
    - `contract_count = len(contract_classes)`
    - `tax_count = len(tax_classes)`
    - `sys_count = len(sys_classes)`
-2. Compute `total = hr_count + contract_count + tax_count + sys_count`.
-3. Count the number of markdown rows actually formatted in each table. Ensure header numbers (e.g., `### Tax Administration (X)`) strictly match the exact row count in that specific table.
-4. **Assert `total == N`**.
-   - If `total != N`, identify which items were duplicated or omitted, reconcile before presenting.
+3. Compute `total = hr_count + contract_count + tax_count + sys_count`.
+4. **Assert `total == N`** (where `N` is the total elements in the raw JSON response).
+5. **Double-check requirement**: The number in each section header (e.g., `### Tax Administration ({tax_count})`) MUST be identical to `len(tax_classes)` and strictly match the exact number of markdown rows rendered in that table.
 
 ## Step 4 — Present the results
 
 **Output only the following — nothing else:**
 
 1. A `## Document Class Inventory` heading.
-2. One markdown table per group (with heading and row count), columns: **Display Name** | **Symbolic Name**. Sort each table alphabetically by Display Name.
-3. A single verification line at the end, computed strictly from the reconciled counts:
+2. Four markdown sections:
+   - `### HR ({hr_count})`
+   - `### Contracts / Legal ({contract_count})`
+   - `### Tax Administration ({tax_count})`
+   - `### System / Technical ({sys_count})`
+   Each containing a table with columns `| Display Name | Symbolic Name |`, sorted alphabetically by `Display Name`.
+3. The verification line at the end, computed strictly from the reconciled counts:
 
 ```
 ✅ Verification: {hr_count} (HR) + {contract_count} (Contracts / Legal) + {tax_count} (Tax Administration) + {sys_count} (System / Technical) = {total} total (API returned: {N})

@@ -47,63 +47,30 @@ def is_valid_employee_id(value, prefix: str) -> bool:
 # ---------------------------------------------------------------------------
 
 def load_mcp_config():
-    """Load ZenIAM connection config from .bob/mcp.json."""
+    """Load basic-auth connection config from .bob/mcp.json."""
     mcp_path = Path(".bob/mcp.json")
     if not mcp_path.exists():
         return None
     try:
         env = json.loads(mcp_path.read_text())["mcpServers"]["core-cs-mcp-server"]["env"]
         return {
-            "SERVER_URL":     env["SERVER_URL"],
-            "OBJECT_STORE":   env["OBJECT_STORE"],
-            "ZEN_URL":        env["ZENIAM_ZEN_URL"],
-            "IAM_URL":        env["ZENIAM_IAM_URL"],
-            "IAM_GRANT_TYPE": env["ZENIAM_IAM_GRANT_TYPE"],
-            "IAM_SCOPE":      env["ZENIAM_IAM_SCOPE"],
-            "IAM_USER":       env["ZENIAM_IAM_USER"],
-            "IAM_PASSWORD":   env["ZENIAM_IAM_PASSWORD"],
+            "SERVER_URL":   env["SERVER_URL"],
+            "OBJECT_STORE": env["OBJECT_STORE"],
+            "USERNAME":     env["USERNAME"],
+            "PASSWORD":     env["PASSWORD"],
         }
     except Exception as exc:
         print(f"❌ Error reading .bob/mcp.json: {exc}", file=sys.stderr)
         return None
 
 
-def get_bearer_token(cfg) -> str:
-    """Exchange username/password for a ZenIAM Bearer token."""
-    iam = requests.post(
-        cfg["IAM_URL"],
-        data={
-            "grant_type": cfg["IAM_GRANT_TYPE"],
-            "username":   cfg["IAM_USER"],
-            "password":   cfg["IAM_PASSWORD"],
-            "scope":      cfg["IAM_SCOPE"],
-        },
-        verify=False,
-        timeout=30,
-    )
-    iam.raise_for_status()
-    zen = requests.get(
-        cfg["ZEN_URL"],
-        headers={
-            "iam-token": iam.json()["access_token"],
-            "username":  cfg["IAM_USER"],
-        },
-        verify=False,
-        timeout=30,
-    )
-    zen.raise_for_status()
-    return zen.json()["accessToken"]
-
-
-def gql(cfg, token, query, variables=None):
-    """Execute a GraphQL query and return the parsed JSON response."""
+def gql(cfg, query, variables=None):
+    """Execute a GraphQL query using basic auth and return the parsed JSON response."""
     resp = requests.post(
         cfg["SERVER_URL"],
         json={"query": query, "variables": variables or {}},
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type":  "application/json",
-        },
+        auth=(cfg["USERNAME"], cfg["PASSWORD"]),
+        headers={"Content-Type": "application/json"},
         verify=False,
         timeout=30,
     )
@@ -154,13 +121,13 @@ query($repo: String!, $where: String) {
 """
 
 
-def fetch_hrdocuments(cfg, token, lastname):
+def fetch_hrdocuments(cfg, lastname):
     """
     Return all HRDocument records under /BOB_LAB/{lastname}/ (INSUBFOLDER).
     Each item includes id, name, className, and a flat property dict keyed by alias.
     """
     where = f"This INSUBFOLDER '/BOB_LAB/{lastname}'"
-    data = gql(cfg, token, QUERY_HRDOCUMENTS, {"repo": cfg["OBJECT_STORE"], "where": where})
+    data = gql(cfg, QUERY_HRDOCUMENTS, {"repo": cfg["OBJECT_STORE"], "where": where})
     raw_docs = (
         (data.get("data") or {})
         .get("documents", {})
@@ -181,13 +148,13 @@ def fetch_hrdocuments(cfg, token, lastname):
     return results
 
 
-def fetch_docs_by_prefix(cfg, token, lastname, prefix):
+def fetch_docs_by_prefix(cfg, lastname, prefix):
     """
     Return all documents whose name starts with {prefix} under /BOB_LAB/{lastname}/.
     Uses INSUBFOLDER and client-side prefix filter (ODQL LIKE not always available).
     """
     where = f"This INSUBFOLDER '/BOB_LAB/{lastname}'"
-    data = gql(cfg, token, QUERY_DOCS_BY_NAME_PREFIX, {"repo": cfg["OBJECT_STORE"], "where": where})
+    data = gql(cfg, QUERY_DOCS_BY_NAME_PREFIX, {"repo": cfg["OBJECT_STORE"], "where": where})
     raw_docs = (
         (data.get("data") or {})
         .get("documents", {})
@@ -329,16 +296,12 @@ Examples:
         print("❌ Could not load .bob/mcp.json. Run from the project root.", file=sys.stderr)
         sys.exit(1)
 
-    print("  🔑 Authenticating …", end=" ", flush=True)
-    token = get_bearer_token(cfg)
-    print("OK")
-
     print(f"  📂 Fetching HRDocument records in /BOB_LAB/{lastname}/ …", end=" ", flush=True)
-    hrdocs = fetch_hrdocuments(cfg, token, lastname)
+    hrdocs = fetch_hrdocuments(cfg, lastname)
     print(f"{len(hrdocs)} found")
 
     print(f"  📂 Fetching documents with prefix '{prefix}' …", end=" ", flush=True)
-    prefix_docs = fetch_docs_by_prefix(cfg, token, lastname, prefix)
+    prefix_docs = fetch_docs_by_prefix(cfg, lastname, prefix)
     print(f"{len(prefix_docs)} found")
 
     property_issues = audit_property_issues(hrdocs, prefix)
