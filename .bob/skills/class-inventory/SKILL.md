@@ -46,11 +46,14 @@ Before rendering the output:
 
 ## Step 4 — Present the results
 
-Output markdown tables for each group containing classes, with columns: **Display Name** | **Symbolic Name**.
-Sort each table alphabetically by Display Name.
+**Output only the following — nothing else:**
 
-End with a single verification line, computed strictly from the reconciled counts:
+1. A `## Document Class Inventory` heading.
+2. One markdown table per group (with heading and row count), columns: **Display Name** | **Symbolic Name**. Sort each table alphabetically by Display Name.
+3. A single verification line at the end, computed strictly from the reconciled counts:
 
 ```
 ✅ Verification: {hr_count} (HR) + {contract_count} (Contracts / Legal) + {tax_count} (Tax Administration) + {sys_count} (System / Technical) = {total} total (API returned: {N})
 ```
+
+**Do NOT output any intermediate reasoning**, grouping logic narration, prefix lists, symbolic-name sorting steps, or any text other than the heading, the four tables, and the verification line.
