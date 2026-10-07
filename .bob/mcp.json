@@ -8,10 +8,10 @@
         "core-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "<YOUR_USERNAME>",
+        "USERNAME": "cpmanager",
         "PASSWORD": "<YOUR_PASSWORD>",
         "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
+        "OBJECT_STORE": "OS1"
       }
     },
     "property-extraction-cs-mcp-server": {
@@ -22,10 +22,10 @@
         "property-extraction-and-classification-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "<YOUR_USERNAME>",
+        "USERNAME": "cpmanager",
         "PASSWORD": "<YOUR_PASSWORD>",
         "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
+        "OBJECT_STORE": "OS1"
       }
     },
     "legal-hold-cs-mcp-server": {
@@ -36,10 +36,10 @@
         "legal-hold-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "<YOUR_USERNAME>",
+        "USERNAME": "cpmanager",
         "PASSWORD": "<YOUR_PASSWORD>",
         "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
+        "OBJECT_STORE": "OS1"
       }
     },
     "ai-document-insight-cs-mcp-server": {
@@ -50,10 +50,10 @@
         "ai-document-insight-cs-mcp-server"
       ],
       "env": {
-        "USERNAME": "<YOUR_USERNAME>",
+        "USERNAME": "cpmanager",
         "PASSWORD": "<YOUR_PASSWORD>",
         "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-        "OBJECT_STORE": "<YOUR_OBJECTSTORE>"
+        "OBJECT_STORE": "OS1"
       }
     }
   }
