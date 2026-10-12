@@ -1,489 +1,161 @@
 ---
 name: hr-classification-workflow
 description: >-
-  Use when the user wants to audit HR document classification in a FileNet
-  namespace (/BOB_LAB/<LASTNAME>/). Covers: finding HRDocuments with missing
-  or invalid EmployeeID, detecting class mismatches (e.g. DUP001 documents),
-  triaging base Document objects to determine their correct class, reclassifying
-  and fixing individual or all misclassified documents, and generating a final
-  classification health report. Activate on phrases like "classification audit",
-  "missing EmployeeID", "misclassified documents", "reclassify HR document",
-  "class mismatch", or "classification health report".
+  Audit and fix HR document classification in a FileNet namespace (/BOB_LAB/<LASTNAME>/).
+  Use for: classification audit, missing or invalid EmployeeID, class mismatch or misclassified
+  documents, triage of a document filed under the base Document class (what is it, who does it
+  belong to), reclassifying or fixing HR documents, and a classification health report.
 ---
 
 # HR Classification Workflow
 
-This skill guides Bob through a complete HR document classification lifecycle
-across six phases. Each phase can be invoked independently — you do not need
-to run all phases in sequence.
+Four independent phases. Pick the one that matches the request; each phase gathers its own data
+and does not depend on earlier phases.
 
----
+| The user wants… | Phase | Changes the repository? |
+|---|---|---|
+| Find bad EmployeeIDs and/or wrong classes | 1 Audit | No |
+| Know what a specific document is and where it belongs | 2 Triage | No |
+| Reclassify / fix one or all documents | 3 Fix | **Yes — only after the user confirms** |
+| A final health report | 4 Report | No (writes a local file only) |
 
-## Prerequisites — verify the virtual environment
+## Step 0 — Verify the virtual environment
 
-Before running any Python command, confirm `.venv/bin/python` exists:
+All Python commands in this skill MUST use the project virtual environment.
+Before running anything, confirm the virtual environment Python interpreter exists:
 
-```
-test -f .venv/bin/python && echo "venv OK" || echo "venv MISSING"
-```
+- **macOS / Linux:**
+  ```
+  test -f .venv/bin/python && echo "venv OK" || echo "venv MISSING"
+  ```
+  If missing: `python3 -m venv .venv`
 
-If missing:
+- **Windows (PowerShell / Command Prompt):**
+  ```
+  if exist .venv\Scripts\python.exe (echo venv OK) else (echo venv MISSING)
+  ```
+  If missing: `python -m venv .venv`
 
-```
-python -m venv .venv && .venv/bin/pip install requests
-```
+Do not proceed until the virtual environment Python is confirmed available.
 
-All Python commands below use `.venv/bin/python`. Run from the project root.
+## Common setup
 
----
+`LASTNAME` comes from the user's message (`/BOB_LAB/DUPONT/` → `DUPONT`). If unclear, ask.
+`PREFIX` is the first 3 characters of `LASTNAME` unless the user says otherwise.
 
-## Phase 1 — Classification Audit
+The scan script uses only the Python standard library and never modifies the repository. Run from the **project root**:
 
-**Trigger phrases**: "classification audit", "missing EmployeeID", "invalid EmployeeID",
-"find documents with wrong EmployeeID", "run a classification audit"
+- **macOS / Linux:**
+  ```
+  .venv/bin/python .bob/skills/hr-classification-workflow/scripts/hr_audit.py --user {LASTNAME} [--prefix {PREFIX}] [--insecure]
+  ```
+- **Windows:**
+  ```
+  .venv\Scripts\python.exe .bob\skills\hr-classification-workflow\scripts\hr_audit.py --user {LASTNAME} [--prefix {PREFIX}] [--insecure]
+  ```
 
-### Steps
+Add `--insecure` only if TLS verification fails on a lab server with a self-signed certificate.
+It prints JSON to stdout: `totalDocuments`, `hrDocumentCount`, `classBreakdown`, `propertyIssues`
+(HRDocuments with a bad EmployeeID) and `classIssues` (any document in the namespace that is not
+an `HRDocument`). If the script fails, show the error and stop; do not estimate numbers.
 
-**Step 1 — Resolve the namespace**
+An EmployeeID is **valid** only if it matches `{PREFIX}` + exactly 3 digits and is not `{PREFIX}000`.
+Null, empty, other formats and `{PREFIX}000` are all invalid, with equal severity.
 
-Extract `LASTNAME` from the user's message (e.g. `DUPONT` from `/BOB_LAB/DUPONT/`).
-If not clear, ask: "Which namespace (last name) should I audit? For example: DUPONT."
+## Phase 1 — Audit
 
-**Step 2 — Run the audit script**
+Run the script. Show only what the user asked for:
 
-```
-.venv/bin/python .bob/skills/hr-classification-workflow/scripts/audit_hr_documents.py --user {LASTNAME}
-```
+- EmployeeID issues → table `Document | EmployeeID found | Issue | ID`, then "N HRDocument(s) with missing or invalid EmployeeID." (none: "✅ All HRDocuments have a valid EmployeeID.")
+- Class issues → table `Document | Actual class | Expected class | ID`, then "N document(s) with the wrong class." (none: "✅ All documents are HRDocument.")
+- Both, or an unspecific "audit" → both tables.
 
-Read the stdout carefully. The script always collects both:
-- `property_issues` — HRDocuments with null, empty, or non-matching EmployeeID
-  (including `{PREFIX}000` which is also invalid)
-- `class_issues` — docs with prefix `{LASTNAME[:3]}` that are not `HRDocument`
-- A saved file: `audit_results_{lastname}.json`
+Take every count from the script output.
 
-**Step 3 — Present only what the user asked for**
+## Choice-list properties
 
-**Answer the user's question exactly — do not surface information they did not ask for.**
+Some `HRDocument` properties only accept values from a choice list (DocType, Department, JobRole,
+Location, JobStatus, EmploymentType, CurrentStatus, DocumentCategory, ClassDocType). The allowed
+values are in `references/choice-lists.md`; read it before proposing values. For each such property:
 
-- If the user asked about **EmployeeID issues only**, show only the property issues table:
+1. Take the value from the document content, as for any property.
+2. Pick the **best matching allowed value** and label the match:
+   - **Exact** — same value, ignoring case, spaces and punctuation ("Disciplinary Record" → `DisciplinaryRecord`).
+   - **Mapped** — different wording, same meaning; give the reason ("Permanent (CDI)", 35 h/week → `Full Time`).
+   - **No match** — no allowed value fits; leave the property unset and mark it `needs manual review`. Never force a value.
+3. Show the raw text and the chosen value side by side. **Mapped** values always need explicit user
+   confirmation (Phase 3 step 3); never apply them silently.
 
-  | Document Name | EmployeeID found | Issue | Document ID |
-  |---|---|---|---|
-  | … | … | … | … |
+If the repository still rejects a value as "not within the range of permitted values", the list in
+`references/choice-lists.md` is out of date: show the error, do not guess another value, and ask the user.
 
-  State: `N HRDocument(s) with missing or invalid EmployeeID.`
-  If none: "✅ All HRDocuments have a valid EmployeeID."
+## Phase 2 — Triage (read-only)
 
-- If the user asked about **class mismatches only**, show only the class issues table:
-
-  | Document Name | Actual Class | Expected Class | Document ID |
-  |---|---|---|---|
-  | … | … | … | … |
-
-  State: `N document(s) found with the wrong class.`
-  If none: "✅ All documents are correctly classified as HRDocument."
-
-- If the user asked about **both**, show both tables and both totals.
-
-Do **not** volunteer the other table unless directly asked. The full results are
-always saved to `audit_results_{lastname}.json` for use by later phases.
-
-### EmployeeID validation rules
-
-An EmployeeID is **invalid** when it is:
-- `null` or not set
-- An empty string
-- Does not match the pattern `{PREFIX}\d{3}` (e.g. `DUP001`, `DUP005`)
-- The value `{PREFIX}000` (all-zeros suffix — seeded misclassification)
-
-All four cases are treated with equal severity — no tiers.
-
----
-
-## Phase 2 — Class-Mismatch Check
-
-**Trigger phrases**: "check document classes", "class mismatch", "documents starting with DUP001",
-"wrong class for DUP001"
-
-### Steps
-
-**Step 1 — Identify the prefix**
-
-Extract the employee ID prefix from the user's message (e.g. `DUP` from `DUP001`).
-If the audit script was already run in Phase 1, reuse `audit_results_{lastname}.json` —
-do not re-run the script.
-
-If the script has not been run yet, run it:
+1. Get the document ID. If the user gave only a name, call `mcp__core-cs-mcp-server__lookup_documents_by_name`.
+2. Call `mcp__property-extraction-cs-mcp-server__property_extraction` for the class, properties and text.
+3. Call `mcp__ai-document-insight-cs-mcp-server__document_qa_specific` with: "What type of HR document is this? Who is the employee (name and ID)? Which department? What is the document date?"
+4. Present, and change nothing:
 
 ```
-.venv/bin/python .bob/skills/hr-classification-workflow/scripts/audit_hr_documents.py --user {LASTNAME} --prefix {PREFIX}
+Document: {name}   Current class: {class}   Recommended class: HRDocument
+Proposed values (each with the text it came from):
+  EmployeeID: {value}   ← "{quote}"
+  Department: {value}   ← "{quote}"
+  DocType:    {value}   ← "{quote}"
+Confidence: High / Medium / Low (say why if not High)
 ```
 
-**Step 2 — Parse `class_issues` from the JSON**
+For choice-list properties, show `{allowed value} (Exact|Mapped from "{raw text}")` as described in
+*Choice-list properties*. If a value is not in the content, write `not found — needs manual review`.
+Never infer it from the file name.
 
-Read `audit_results_{lastname}.json` and extract the `class_issues` array.
+## Phase 3 — Fix (changes the repository)
 
-**Step 3 — Present the class mismatch table**
-
-| Document Name | Actual Class | Expected Class | Document ID |
-|---|---|---|---|
-| … | … | … | … |
-
-For each row, call `mcp__core-cs-mcp-server__get_document_properties` with the document ID
-to confirm the actual class is accurate (the GraphQL query already returns className, so
-this is a verification step only — skip if results are clearly unambiguous).
-
-State: "`N` of `M` documents starting with `{PREFIX}` are misclassified."
-
----
-
-## Phase 3 — Document Triage
-
-**Trigger phrases**: "filed under base Document class", "what is this document",
-"who does it belong to", "what class should it have", "read its content and tell me"
-
-### Steps
-
-**Step 1 — Identify the document**
-
-The user will name a specific document (by name or ID). If they only give a name,
-look it up:
-
-Call `mcp__core-cs-mcp-server__lookup_documents_by_name` with keywords from the document name.
-
-Use the returned ID for all subsequent calls.
-
-**Step 2 — Extract properties and content**
-
-Call `mcp__property-extraction-cs-mcp-server__property_extraction` with the document identifier.
-
-This returns:
-- The document's current class
-- All available properties for that class
-- The document's text extract content
-
-**Step 3 — Analyse the content**
-
-Call `mcp__ai-document-insight-cs-mcp-server__document_qa_specific` with:
-- `document_id`: the document ID
-- `prompt`: "What type of HR document is this? Who is the employee (name and ID)? What department are they in? What is the document date?"
-
-**Step 4 — Determine the correct classification**
-
-Based on content analysis, determine:
-
-| Question | Answer |
-|---|---|
-| **What is it?** | e.g. Payslip, Employment Contract, Performance Review … |
-| **Who does it belong to?** | Employee name + EmployeeID extracted from content |
-| **Correct class** | Almost always `HRDocument` for HR content |
-| **Required properties** | `EmployeeID`, `Department`, `DocType`, and any others found in content |
-
-**Step 5 — Present the recommendation**
-
-Present a clear recommendation block:
+1. **Select targets.** One document: the one the user named. "All"/"remaining": run the script and take `classIssues` + `propertyIssues`.
+2. **Read each target** as in Phase 2 steps 2–3. Call `mcp__core-cs-mcp-server__get_class_property_descriptions` for `HRDocument` once to get the exact property identifiers. A target whose class or EmployeeID cannot be established from its content is marked `⚠️ needs manual review` and left out of the plan.
+3. **Show the change plan and ask for confirmation. Make no change before the answer.**
 
 ```
-Document: {name}
-Current class: Document  ← WRONG
-Recommended class: HRDocument
+## Proposed changes — {LASTNAME}
+| # | Document | Class: now → new | EmployeeID: now → new | Department | DocType | Evidence |
+|---|---|---|---|---|---|---|
+| 1 | … | Document → HRDocument | (none) → DUP004 | … | … | "…quote…" |
 
-Recommended properties:
-  EmployeeID:  {value from content}
-  Department:  {value from content}
-  DocType:     {value from content}
-  [any other HRDocument properties found]
+Choice-list mappings (need your confirmation):
+| # | Document | Property | Text in document | Proposed value | Match | Other allowed values |
+|---|---|---|---|---|---|---|
+| 1 | … | EmploymentType | "Permanent (CDI)" | Full Time | Mapped | Part Time, Contractor, Intern, Temporary |
 
-Confidence: High / Medium / Low  (state why if not High)
+Not included (needs manual review): {name — reason}
 ```
 
-Do NOT apply any changes in this phase. Triage only.
-
----
-
-## Phase 4 — Fix One Document
-
-**Trigger phrases**: "fix document", "reclassify it", "go ahead and fix", "reclassify as HRDocument"
-
-### Steps
-
-**Step 1 — Confirm the target document**
-
-If Phase 3 was just completed, the document ID is already known. Otherwise ask the user
-for the document name or ID. Look it up with `lookup_documents_by_name` if needed.
-
-**Step 2 — Announce what you will do**
-
-State exactly what you are about to do:
-```
-I will:
-  1. Change class: Document → HRDocument
-  2. Set EmployeeID = {value}
-  3. Set Department = {value}
-  4. Set DocType = {value}
-
-Proceeding…
-```
-
-Do not ask for confirmation — just state it and proceed.
-
-**Step 3 — Change the class**
-
-Call `mcp__core-cs-mcp-server__update_document_class`:
-- `identifier`: document ID
-- `class_identifier`: `HRDocument`
-
-**Step 4 — Set the properties**
-
-Call `mcp__core-cs-mcp-server__get_class_property_descriptions` with `HRDocument`
-to get the exact property identifiers, then call
-`mcp__core-cs-mcp-server__update_document_properties` with:
-- `identifier`: document ID
-- `document_properties.properties`: array of `{identifier, value}` objects for
-  `EmployeeID`, `Department`, `DocType` (and any others identified in Phase 3)
-
-**Step 5 — Confirm success**
-
-Call `mcp__core-cs-mcp-server__get_document_properties` on the document ID and verify:
-- `className` is now `HRDocument`
-- `EmployeeID` matches the value set
-
-Present a one-line confirmation:
-```
-✅ {document name} — reclassified as HRDocument, EmployeeID={value}, Department={value}, DocType={value}
-```
-
-### Rules
-- Never reclassify without having read the document content first (Phase 3 or equivalent)
-- Never set properties to a value not found in the document content
-
----
-
-## Phase 5 — Fix All Remaining Misclassified Documents
-
-**Trigger phrases**: "fix the remaining", "fix all misclassified", "fix all documents",
-"reclassify all", "bulk fix"
-
-### Steps
-
-**Step 1 — Load the audit results**
-
-Read `audit_results_{lastname}.json`. Combine:
-- `class_issues` array (wrong-class documents)
-- `property_issues` array (HRDocuments with invalid EmployeeID)
-
-These are the documents that need remediation.
-
-If the audit JSON does not exist, run Phase 1 first to generate it.
-
-**Step 2 — For each document in `class_issues`**
-
-For each entry:
-1. Call `mcp__property-extraction-cs-mcp-server__property_extraction` to get content
-2. Call `mcp__ai-document-insight-cs-mcp-server__document_qa_specific` with prompt:
-   "What HR document type is this, what is the employee's ID, department, and document date?"
-3. Call `mcp__core-cs-mcp-server__update_document_class` → `HRDocument`
-4. Call `mcp__core-cs-mcp-server__update_document_properties` with extracted values
-5. Record result in the running summary
-
-**Step 3 — For each document in `property_issues`**
-
-For each entry (already class `HRDocument` but invalid EmployeeID):
-1. Call `mcp__property-extraction-cs-mcp-server__property_extraction` to get content
-2. Call `mcp__ai-document-insight-cs-mcp-server__document_qa_specific` with prompt:
-   "What is the correct employee ID for this person? What is their department?"
-3. Call `mcp__core-cs-mcp-server__update_document_properties` with corrected values
-4. Record result in the running summary
-
-**Step 4 — Present the summary table**
+   List every **Mapped** choice-list value in the mappings table (Exact matches go only in the main
+   table). Then ask: "Apply these N changes to the repository?" with the options **Apply all**,
+   **Apply only some (tell me which)**, **Cancel**. If there are mapped values, the question must say
+   that applying confirms them too, and the user can pick a different allowed value instead. Wait for the answer. If the user adjusts a value, show the updated plan and ask again.
+4. **Apply only what was approved.** Per document: `mcp__core-cs-mcp-server__update_document_class` (if the class changes) first, then `mcp__core-cs-mcp-server__update_document_properties` with `{identifier, value}` pairs. If one document fails, record the error and continue with the rest.
+5. **Verify.** Call `mcp__core-cs-mcp-server__get_document_properties` for each changed document and compare `className` and `EmployeeID` with the approved values.
+6. **Report** every processed document:
 
 ```
-## Remediation Summary — {LASTNAME}
-
-| Document | Previous Class | New Class | EmployeeID set | Status |
+| Document | Previous class | New class | EmployeeID set | Status |
 |---|---|---|---|---|
-| {name} | {old} | HRDocument | {value} | ✅ Fixed |
-| {name} | HRDocument | HRDocument | {value} | ✅ Fixed |
-| {name} | … | … | … | ❌ Error: {reason} |
-
-**Fixed:** X  |  **Errors:** Y  |  **Total:** Z
+| … | Document | HRDocument | DUP004 | ✅ Fixed and verified |
+| … | … | … | … | ❌ Error: {reason} / ⚠️ Needs manual review / ⏭ Not approved |
+Fixed: X | Errors: Y | Skipped: Z | Total: N
 ```
 
-List any errors explicitly below the table.
-
-### Rules
-- Always read content before setting property values — never guess
-- Always show the summary table, even if all documents were fixed successfully
-- If a document cannot be read (text extract unavailable), flag it as `⚠️ Skipped — no content`
-
----
-
-## Phase 6 — Classification Health Report
-
-**Trigger phrases**: "classification health report", "final report", "are all documents correctly classified",
-"governance recommendations", "generate a report"
-
-### Steps
-
-**Step 1 — Count all HR documents in the namespace**
-
-Run the health check script:
-
-```
-.venv/bin/python .bob/skills/hr-classification-workflow/scripts/health_check_hr_documents.py --user {LASTNAME}
-```
-
-Read the stdout and `health_check_{lastname}.json` to get the total document count,
-correctly classified `HRDocument` count, and any remaining misclassified documents.
-
-**Step 2 — Check for remaining EmployeeID issues**
-
-If `audit_results_{lastname}.json` exists and was generated after the last remediation,
-use its `summary` block. Otherwise re-run the audit script (Phase 1) to get fresh counts.
-
-**Step 3 — Create the output folder and write the report**
-
-Create the output folder:
-
-```
-audits/{LASTNAME}_{YYYYMMDD}/
-```
-
-Where `{YYYYMMDD}` is today's date (e.g. `DUPONT_20250115`).
-
-Write the report to:
-
-```
-audits/{LASTNAME}_{YYYYMMDD}/classification_health_report.md
-```
-
-Use this template:
-
-```markdown
-# HR Document Classification Health Report
-
-**Namespace:** /BOB_LAB/{LASTNAME}/
-**Report Date:** {YYYY-MM-DD}
-**Generated by:** Bob (AI Documentalist)
-
----
-
-## Executive Summary
-
-| Metric | Count |
-|---|---|
-| Total HR documents in namespace | N |
-| Correctly classified (HRDocument) | N |
-| Remaining classification issues | N |
-| EmployeeID issues resolved | N |
-| Documents still needing attention | N |
-
-**Overall health:** 🟢 Good / 🟡 Needs attention / 🔴 Critical
-
----
-
-## Classification Breakdown
-
-### Documents by Class
-
-| Class | Count | Expected? |
-|---|---|---|
-| HRDocument | N | ✅ Yes |
-| Document | N | ❌ No — misclassified |
-| Contract | N | ❌ No — wrong domain class |
-| {other} | N | … |
-
----
-
-## Issues Found and Resolved
-
-### Property Issues (EmployeeID)
-
-| Document | Issue | Resolution |
-|---|---|---|
-| … | … | … |
-
-### Class Issues
-
-| Document | Old Class | New Class | Resolution |
-|---|---|---|---|
-| … | … | … | … |
-
----
-
-## Remaining Issues
-
-List any documents that could NOT be fixed, with the reason.
-
-If none: "✅ All issues resolved — no remaining classification problems."
-
----
-
-## Governance Recommendations
-
-Based on the audit findings, the following governance measures are recommended:
-
-1. **Mandatory EmployeeID validation** — enforce at upload time; reject documents
-   without a valid 6-digit EmployeeID at the ingestion layer.
-
-2. **Class enforcement policy** — HR documents must always be filed as `HRDocument`,
-   never as base `Document`. Consider disabling direct `Document` class creation
-   in the `/BOB_LAB/` namespace.
-
-3. **Regular classification audits** — run this skill's Phase 1 audit monthly to
-   catch misclassification early.
-
-4. **Required property checklist** — ensure `EmployeeID`, `Department`, and `DocType`
-   are marked as required fields in the `HRDocument` class definition.
-
-5. **Training** — ensure all document submitters understand that HR documents must
-   use the `HRDocument` class with all mandatory properties populated.
-
----
-
-*Report generated by the `hr-classification-workflow` Bob skill.*
-*Source namespace: /BOB_LAB/{LASTNAME}/*
-```
-
-**Step 4 — Confirm report location**
-
-Tell the user:
-```
-✅ Classification health report saved to:
-   audits/{LASTNAME}_{YYYYMMDD}/classification_health_report.md
-```
-
-The report is saved to the local workspace only — it is NOT uploaded to the FileNet repository.
-
----
-
-## Rules that must never be broken
-
-1. **Never reclassify a document without first reading its content** (via `property_extraction`
-   or `document_qa_specific`). Class changes based on filename alone are forbidden.
-
-2. **Never set an EmployeeID to a value not found in the document content.** If the
-   correct ID cannot be determined from the content, flag the document as `⚠️ needs manual review`.
-
-3. **Never skip the summary table** after any bulk operation (Phase 5). Always show
-   every document processed, even if all succeeded.
-
-4. **Never state counts that have not been verified** by the script output or MCP tool
-   response. Do not estimate or guess document totals.
-
-5. **Never update properties without first confirming the class** is correct. If a
-   document's class is still wrong, fix the class first (Phase 4 Step 3), then set
-   properties (Phase 4 Step 4).
-
----
-
-## Supporting files in this skill directory
-
-- `scripts/audit_hr_documents.py` — GraphQL-based bulk audit for Phases 1 & 2
-
-Run from the project root using `.venv/bin/python`.
-
-## Related skills
-
-- `hr-document-upload` — bulk-upload HR documents with seeded misclassification seeds
-- `class-property-report` — inspect all properties of a document class in detail
+## Phase 4 — Health report (read-only on the repository)
+
+1. Run the script; use `totalDocuments`, `hrDocumentCount`, `classBreakdown`, `classIssues`, `propertyIssues`.
+2. Fill in `references/report-template.md`. Resolved issues are those the user tells you were fixed in this session, or that you can see from the audit; otherwise leave "resolved" at 0 rather than guess.
+3. Save to `audits/{LASTNAME}_{YYYYMMDD}/classification_health_report.md` (today's date) and tell the user the path. The report stays in the local workspace; it is not uploaded to FileNet.
+
+## Rules
+
+1. Never change a class or property before the user has confirmed the plan shown in Phase 3.
+2. Never base a class or property value on the file name; only on the document content, and show the evidence.
+3. Set the class before the properties.
+4. Every number you state must come from the script output or a tool response.
+5. Choice-list properties get only values from `references/choice-lists.md`; mapped values need user confirmation, and if nothing fits the property stays unset.
+6. Changing the class (e.g. `Contract` → `HRDocument`) can clear properties that look shared, such as EmployeeID. Always set every planned property after the class change, including values that already existed.
