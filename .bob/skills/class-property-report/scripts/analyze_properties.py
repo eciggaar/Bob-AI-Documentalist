@@ -1,109 +1,127 @@
 #!/usr/bin/env python3
 """
-analyze_properties.py — Class Property Report
-Usage: python3 analyze_properties.py < all_props.json
-       OR: echo '<json>' | python3 analyze_properties.py
+analyze_properties.py - Class Property Report (deterministic)
 
-Reads a single JSON array from stdin — the raw output of get_class_property_descriptions.
-Each object must have: symbolic_name, display_name, data_type, cardinality,
-is_searchable, is_system_owned, is_hidden.
+Input : JSON array from get_class_property_descriptions (stdin or --file PATH).
+        Per item only these keys are used: symbolic_name, display_name,
+        data_type, cardinality, is_searchable, is_system_owned, is_hidden.
+Output: the FINAL markdown report on stdout, to be shown verbatim.
 
-Computes all counts using len() on filtered sublists, verifies all splits sum to
-the total, then prints a structured report for Bob to present to the user.
+Exit codes
+  0  success
+  2  bad input (invalid JSON, not an array, missing key, non-boolean flag,
+     blank/duplicate symbolic_name). Offending items are listed on stderr.
+  4  --expected N does not match the number of properties received
 """
-
+import argparse
 import json
+import re
 import sys
+
+KEYS = ("symbolic_name", "display_name", "data_type", "cardinality")
+FLAGS = ("is_searchable", "is_system_owned", "is_hidden")
+SYM_OK = re.compile(r"^[A-Za-z_][A-Za-z0-9_.$-]*$")
+
+
+def die(code, lines):
+    print("ERROR: " + "\n".join(lines[:20]), file=sys.stderr)
+    if len(lines) > 20:
+        print(f"... and {len(lines) - 20} more", file=sys.stderr)
+    sys.exit(code)
+
+
+def load(args):
+    raw = open(args.file, encoding="utf-8").read() if args.file else sys.stdin.read()
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as e:
+        die(2, [f"invalid JSON ({e}) - input was not passed through intact"])
+    if not isinstance(data, list) or not data:
+        die(2, ["input must be a non-empty JSON array"])
+    problems, seen = [], set()
+    for i, p in enumerate(data):
+        if not isinstance(p, dict):
+            problems.append(f"item {i}: not an object")
+            continue
+        for k in KEYS:
+            if not isinstance(p.get(k), str) or not p[k].strip():
+                problems.append(f"item {i} ({p.get('symbolic_name')!r}): '{k}' missing or blank")
+        for k in FLAGS:
+            if not isinstance(p.get(k), bool):
+                problems.append(f"item {i} ({p.get('symbolic_name')!r}): '{k}' must be true/false, got {p.get(k)!r}")
+        sym = p.get("symbolic_name")
+        if isinstance(sym, str):
+            if not SYM_OK.match(sym):
+                problems.append(f"item {i}: suspicious symbolic_name {sym!r}")
+            if sym in seen:
+                problems.append(f"item {i}: duplicate symbolic_name {sym!r}")
+            seen.add(sym)
+    if problems:
+        die(2, problems)
+    return data
+
+
+def esc(s):
+    return str(s).replace("|", "\\|")
+
+
+def table(header, rows):
+    out = ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
+    out += ["| " + " | ".join(esc(c) for c in r) + " |" for r in rows]
+    return out
 
 
 def main():
-    raw = sys.stdin.read()
-    try:
-        all_props = json.loads(raw)
-    except json.JSONDecodeError as e:
-        print(f"ERROR: Invalid JSON on stdin — {e}", file=sys.stderr)
-        sys.exit(1)
-    if not isinstance(all_props, list):
-        print("ERROR: stdin must contain a JSON array.", file=sys.stderr)
-        sys.exit(1)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--file")
+    ap.add_argument("--expected", type=int, help="property count reported independently by the source")
+    ap.add_argument("--class", dest="cls", default="", help="resolved class symbolic name (shown in the heading)")
+    args = ap.parse_args()
 
-    total = len(all_props)
+    props = load(args)                     # API order is preserved
+    n = len(props)
+    if args.expected is not None and args.expected != n:
+        die(4, [f"received {n} properties but source reported {args.expected}"])
 
-    # --- Split: system vs custom ---
-    system_props = [p for p in all_props if p.get("is_system_owned") is True]
-    custom_props  = [p for p in all_props if p.get("is_system_owned") is False]
-    assert len(system_props) + len(custom_props) == total, \
-        f"SPLIT ERROR system+custom: {len(system_props)}+{len(custom_props)} != {total}"
+    system = [p for p in props if p["is_system_owned"]]
+    custom = [p for p in props if not p["is_system_owned"]]
+    search = [p for p in props if p["is_searchable"]]
+    nosearch = [p for p in props if not p["is_searchable"]]
+    hidden = [p for p in props if p["is_hidden"]]
+    visible = [p for p in props if not p["is_hidden"]]
+    assert len(system) + len(custom) == len(search) + len(nosearch) == len(hidden) + len(visible) == n
 
-    # --- Split: searchable flag vs not ---
-    searchable_props     = [p for p in all_props if p.get("is_searchable") is True]
-    not_searchable_props = [p for p in all_props if p.get("is_searchable") is False]
-    assert len(searchable_props) + len(not_searchable_props) == total, \
-        f"SPLIT ERROR searchable flag: {len(searchable_props)}+{len(not_searchable_props)} != {total}"
+    owned = lambda p: "system" if p["is_system_owned"] else "custom"
+    srch = lambda p: "yes" if p["is_searchable"] else "no"
+    hid = lambda p: "yes" if p["is_hidden"] else "no"
 
-    # --- Split: hidden vs visible ---
-    hidden  = [p for p in all_props if p.get("is_hidden") is True]
-    visible = [p for p in all_props if p.get("is_hidden") is False]
-    assert len(hidden) + len(visible) == total, \
-        f"SPLIT ERROR hidden: {len(hidden)}+{len(visible)} != {total}"
+    src = (f"API reported: {args.expected}" if args.expected is not None
+           else "API count not independently available")
+    SP = ("&nbsp;", "&nbsp;")  # spacer row between the three pairs
+    out = ["## Class Property Report" + (f": {args.cls}" if args.cls else ""), "",
+           "### Summary", ""]
+    out += ["| Metric | Count |", "|:---|---:|",
+            "| **Ownership** | |",
+            f"| Custom / business | {len(custom)} |",
+            f"| System-owned | {len(system)} |",
+            f"| {SP[0]} | {SP[1]} |",
+            "| **Searchability** | |",
+            f"| Searchable | {len(search)} |",
+            f"| Not searchable | {len(nosearch)} |",
+            f"| {SP[0]} | {SP[1]} |",
+            "| **Visibility** | |",
+            f"| Hidden | {len(hidden)} |",
+            f"| Visible | {len(visible)} |", ""]
 
-    # --- Emit verified counts ---
-    print("=== VERIFIED COUNTS ===")
-    print(f"total={total}")
-    print(f"system_owned={len(system_props)}")
-    print(f"custom={len(custom_props)}")
-    print(f"system_plus_custom={len(system_props) + len(custom_props)}")
-    print(f"searchable={len(searchable_props)}")
-    print(f"not_searchable={len(not_searchable_props)}")
-    print(f"searchable_plus_not={len(searchable_props) + len(not_searchable_props)}")
-    print(f"hidden={len(hidden)}")
-    print(f"visible={len(visible)}")
-    print(f"hidden_plus_visible={len(hidden) + len(visible)}")
-
-    # --- Flat numbered list: ALL properties ---
-    print("\n=== FLAT LIST ===")
-    for i, p in enumerate(all_props, start=1):
-        sym     = p.get("symbolic_name", "")
-        display = p.get("display_name", "")
-        dtype   = p.get("data_type", "")
-        card    = p.get("cardinality", "")
-        owned   = "system" if p.get("is_system_owned") else "custom"
-        srch    = "searchable" if p.get("is_searchable") else "not_searchable"
-        vis     = "hidden" if p.get("is_hidden") else "visible"
-        print(f"{i}|{sym}|{display}|{dtype}|{card}|{owned}|{srch}|{vis}")
-
-    print(f"\n=== TOTAL: {total} ===")
-
-    # --- System properties list ---
-    print(f"\n=== SYSTEM PROPERTIES ({len(system_props)}) ===")
-    for i, p in enumerate(system_props, start=1):
-        sym     = p.get("symbolic_name", "")
-        display = p.get("display_name", "")
-        dtype   = p.get("data_type", "")
-        srch    = "searchable" if p.get("is_searchable") else "not_searchable"
-        vis     = "hidden" if p.get("is_hidden") else "visible"
-        print(f"{i}|{sym}|{display}|{dtype}|{srch}|{vis}")
-
-    # --- Custom properties list ---
-    print(f"\n=== CUSTOM PROPERTIES ({len(custom_props)}) ===")
-    for i, p in enumerate(custom_props, start=1):
-        sym     = p.get("symbolic_name", "")
-        display = p.get("display_name", "")
-        dtype   = p.get("data_type", "")
-        srch    = "searchable" if p.get("is_searchable") else "not_searchable"
-        vis     = "hidden" if p.get("is_hidden") else "visible"
-        print(f"{i}|{sym}|{display}|{dtype}|{srch}|{vis}")
-
-    # --- Searchable properties list ---
-    print(f"\n=== SEARCHABLE PROPERTIES ({len(searchable_props)}) ===")
-    for i, p in enumerate(searchable_props, start=1):
-        sym     = p.get("symbolic_name", "")
-        display = p.get("display_name", "")
-        dtype   = p.get("data_type", "")
-        card    = p.get("cardinality", "")
-        owned   = "system" if p.get("is_system_owned") else "custom"
-        vis     = "hidden" if p.get("is_hidden") else "visible"
-        print(f"{i}|{sym}|{display}|{dtype}|{card}|{owned}|{vis}")
+    # One list: custom first, then system; API order kept within each group.
+    ordered = custom + system
+    out += ["### All properties (custom first, then system)", ""]
+    out += table(["#", "Symbolic Name", "Display Name", "Data Type", "Cardinality", "Owned", "Searchable", "Hidden"],
+                 [(i, p["symbolic_name"], p["display_name"], p["data_type"], p["cardinality"],
+                   owned(p), srch(p), hid(p)) for i, p in enumerate(ordered, 1)])
+    out += ["", f"### Total: {n} properties", "",
+            f"\n*Counts computed from {n} properties received ({src}).*"]
+    print("\n".join(out))
 
 
 if __name__ == "__main__":
