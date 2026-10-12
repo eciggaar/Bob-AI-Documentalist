@@ -9,13 +9,16 @@ Usage:
     python bulk_upload_employees.py --user DUPONT
 """
 
-import os
-import sys
-import json
-import re
 import argparse
-import requests
+import json
+import sys
+import warnings
 from pathlib import Path
+
+import requests
+import urllib3
+
+warnings.filterwarnings("ignore", category=urllib3.exceptions.InsecureRequestWarning)
 
 # Document categories
 CATEGORIES = [
@@ -89,7 +92,7 @@ def load_mcp_config():
     if not mcp_path.exists():
         return None
     try:
-        env = json.loads(mcp_path.read_text())['mcpServers']['core-cs-mcp-server']['env']
+        env = json.loads(mcp_path.read_text(encoding='utf-8'))['mcpServers']['core-cs-mcp-server']['env']
         return {
             'SERVER_URL':   env['SERVER_URL'],
             'OBJECT_STORE': env['OBJECT_STORE'],
@@ -100,11 +103,11 @@ def load_mcp_config():
         return None
 
 
-def fetch_existing_doc_names(cfg, folder_path):
+def fetch_existing_doc_names(cfg, folder_path, verbose=False):
     """
     Return a set of document names already filed under folder_path in the
-    repository. Matches the stem of local .txt filenames. Returns empty set
-    on any error (folder not found, network issue, etc.).
+    repository. Includes both the exact document name and stem for robust matching.
+    Returns (names_set, success_bool).
     """
     query = """
     query($repo: String!, $folder: String!) {
@@ -127,19 +130,40 @@ def fetch_existing_doc_names(cfg, folder_path):
             timeout=15,
         )
         data = resp.json()
+        if 'errors' in data:
+            err_msg = str(data['errors'])
+            if 'not found' in err_msg.lower() or 'does not exist' in err_msg.lower():
+                if verbose:
+                    print(f"  [verbose] Folder does not exist yet in repo: {folder_path}")
+                return set(), True
+            print(f"  ❌ GraphQL error checking {folder_path}: {data['errors'][0].get('message', '')[:100]}", file=sys.stderr)
+            return set(), False
+
         docs = (data.get('data') or {}).get('folder') or {}
         contained = (docs.get('containedDocuments') or {}).get('documents') or []
-        return {d['name'] for d in contained if d.get('name')}
-    except Exception:
-        return set()
+        names = set()
+        for d in contained:
+            name = d.get('name')
+            if name:
+                names.add(name)
+                if name.endswith('.txt'):
+                    names.add(name[:-4])
+                else:
+                    names.add(f"{name}.txt")
+        if verbose:
+            print(f"  [verbose] {folder_path} -> found {len(contained)} doc(s): {sorted(list(names))}")
+        return names, True
+    except Exception as e:
+        print(f"  ❌ Error checking existing documents in {folder_path}: {e}", file=sys.stderr)
+        return set(), False
 
 
 def get_employee_folders(base_source_path):
     """Get list of employee folders from source directory"""
     source_path = Path(base_source_path)
     if not source_path.exists():
-        print(f"❌ Source directory {base_source_path} not found!")
-        return []
+        print(f"❌ Error: Source directory '{base_source_path}' not found!", file=sys.stderr)
+        sys.exit(1)
     
     employees = []
     for item in source_path.iterdir():
@@ -148,7 +172,7 @@ def get_employee_folders(base_source_path):
     
     return sorted(employees)
 
-def generate_upload_plan(lastname):
+def generate_upload_plan(lastname, verbose=False):
     """Generate upload plan containing only documents not yet in the repository.
 
     For each employee folder, queries the repository for already-uploaded
@@ -181,6 +205,7 @@ def generate_upload_plan(lastname):
     total_docs = 0
     skipped_docs = 0
     seeded_count = 0
+    check_failures = 0
 
     for employee_name in employees:
         employee_id = employee_name.split('_')[0]
@@ -201,13 +226,14 @@ def generate_upload_plan(lastname):
             repo_folder = f"{base_target_path}/{employee_name}/{category}"
             existing_names = set()
             if cfg:
-                existing_names = fetch_existing_doc_names(cfg, repo_folder)
+                existing_names, check_ok = fetch_existing_doc_names(cfg, repo_folder, verbose=verbose)
+                if not check_ok:
+                    check_failures += 1
 
             new_docs = []
             for doc_file in sorted(category_path.glob("*.txt")):
-                # Repository name is the stem (filename without .txt extension)
-                doc_name = doc_file.stem
-                if doc_name in existing_names:
+                # Check both full filename (e.g. Doc.txt) and stem (e.g. Doc)
+                if doc_file.name in existing_names or doc_file.stem in existing_names:
                     employee_data["skipped_documents"].append({
                         "filename": doc_file.name,
                         "reason": "Already exists in repository",
@@ -247,6 +273,11 @@ def generate_upload_plan(lastname):
         if employee_data["documents"] or employee_data["skipped_documents"]:
             plan["employees"].append(employee_data)
 
+    if check_failures > 0:
+        print(f"\n❌ Aborting: {check_failures} repository existence check(s) failed.", file=sys.stderr)
+        print("Please verify network connectivity and repository configuration in .bob/mcp.json.", file=sys.stderr)
+        sys.exit(1)
+
     plan["total_documents"] = total_docs
     plan["skipped_documents"] = skipped_docs
     plan["seeded_errors"] = seeded_count
@@ -277,27 +308,50 @@ def print_upload_plan(plan):
                 print(f"      - {doc['filename']}: {doc['seeded_error']}")
 
 def generate_mcp_commands(plan):
-    """Generate MCP commands for Bob to execute"""
+    """Generate commands to execute for folders and document uploads"""
     commands = []
     base_target_path = plan['base_target_path']
-    
-    # Commands to create employee folders and subfolders
-    for emp in plan['employees']:
-        # Create employee folder
+    created_folder_paths = set()
+
+    # Ensure root /BOB_LAB folder is created if needed
+    if "/BOB_LAB" not in created_folder_paths:
         commands.append({
             "type": "create_folder",
-            "employee": emp['name'],
-            "path": f"{base_target_path}/{emp['name']}"
+            "employee": "_ROOT_",
+            "path": "/BOB_LAB"
         })
-        
-        # Create category subfolders
-        for folder in emp['folders']:
+        created_folder_paths.add("/BOB_LAB")
+
+    # Ensure base lab namespace folder /BOB_LAB/{LASTNAME} is created if needed
+    if base_target_path not in created_folder_paths:
+        commands.append({
+            "type": "create_folder",
+            "employee": "_NAMESPACE_",
+            "path": base_target_path
+        })
+        created_folder_paths.add(base_target_path)
+    
+    # Commands to create employee folders and category subfolders
+    for emp in plan['employees']:
+        emp_folder_path = f"{base_target_path}/{emp['name']}"
+        if emp_folder_path not in created_folder_paths:
             commands.append({
                 "type": "create_folder",
                 "employee": emp['name'],
-                "category": folder['name'],
-                "path": folder['path']
+                "path": emp_folder_path
             })
+            created_folder_paths.add(emp_folder_path)
+        
+        for folder in emp['folders']:
+            f_path = folder['path']
+            if f_path not in created_folder_paths:
+                commands.append({
+                    "type": "create_folder",
+                    "employee": emp['name'],
+                    "category": folder['name'],
+                    "path": f_path
+                })
+                created_folder_paths.add(f_path)
     
     # Commands to upload documents
     for emp in plan['employees']:
@@ -333,22 +387,32 @@ Examples:
         metavar="LASTNAME",
         help="Your last name, used as the lab namespace (e.g., CIGGAAR, DUPONT)"
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print verbose output including repository query results per folder"
+    )
 
     args = parser.parse_args()
     lastname = args.user.upper().strip()
+
+    plan_filename = f"upload_plan_{lastname.lower()}.json"
+    commands_filename = f"upload_commands_{lastname.lower()}.json"
+
+    # Remove stale plan files if present
+    for stale_file in (Path(plan_filename), Path(commands_filename)):
+        if stale_file.exists():
+            stale_file.unlink()
 
     print("=" * 70)
     print(f"BULK UPLOAD PREPARATION FOR {lastname}")
     print("=" * 70)
 
-    plan = generate_upload_plan(lastname)
+    plan = generate_upload_plan(lastname, verbose=args.verbose)
 
     print_upload_plan(plan)
 
     commands = generate_mcp_commands(plan)
-
-    plan_filename = f"upload_plan_{lastname.lower()}.json"
-    commands_filename = f"upload_commands_{lastname.lower()}.json"
 
     with open(plan_filename, 'w', encoding='utf-8') as f:
         json.dump(plan, f, indent=2, ensure_ascii=False)
@@ -362,7 +426,7 @@ Examples:
     print("NEXT STEPS:")
     print("=" * 70)
     print(f"1. Review the upload plan in upload_plan_{lastname.lower()}.json")
-    print(f"2. Bob will execute the commands from upload_commands_{lastname.lower()}.json")
+    print(f"2. Execute the upload: python .bob/skills/hr-document-upload/scripts/execute_bulk_upload.py --user {lastname}")
     print("3. The script handles all seeded misclassifications automatically")
     print(f"4. Total operations: {len(commands)} (folders + documents)")
     if plan.get('skipped_documents', 0) > 0:

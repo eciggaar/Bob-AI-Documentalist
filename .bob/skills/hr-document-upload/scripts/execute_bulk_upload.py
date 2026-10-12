@@ -7,15 +7,17 @@ Usage:
     python execute_bulk_upload.py --user CIGGAAR
 """
 
-import json
-import os
-import sys
-import requests
 import argparse
-import base64
+import json
+import sys
 import uuid
+import warnings
 from pathlib import Path
-from datetime import datetime
+
+import requests
+import urllib3
+
+warnings.filterwarnings("ignore", category=urllib3.exceptions.InsecureRequestWarning)
 
 def load_mcp_config():
     """Load Basic Auth configuration from .bob/mcp.json."""
@@ -27,7 +29,7 @@ def load_mcp_config():
         sys.exit(1)
 
     try:
-        with open(mcp_config_path, 'r') as f:
+        with open(mcp_config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
 
         env = config['mcpServers']['core-cs-mcp-server']['env']
@@ -94,15 +96,15 @@ def create_folder_graphql(session, folder_name, parent_path):
             error_msg = str(result['errors'])
             if 'uniqueness' in error_msg.lower() or 'not unique' in error_msg.lower():
                 print(f"  ℹ️  Folder already exists: {folder_name}")
-                return True
+                return "exists"
             print(f"  ❌ Error: {result['errors'][0].get('message', 'Unknown error')[:100]}")
-            return False
+            return "error"
         
         print(f"  ✅ Created: {folder_name}")
-        return True
+        return "created"
     except Exception as e:
         print(f"  ❌ Exception: {str(e)[:100]}")
-        return False
+        return "error"
 
 def upload_document_graphql(session, doc_info):
     """Upload document using GraphQL mutation with base64-encoded content"""
@@ -248,13 +250,13 @@ def execute_upload_plan(lastname):
     
     # Load files
     try:
-        with open(plan_file, 'r') as f:
+        with open(plan_file, 'r', encoding='utf-8') as f:
             plan = json.load(f)
-        with open(commands_file, 'r') as f:
+        with open(commands_file, 'r', encoding='utf-8') as f:
             commands = json.load(f)
     except FileNotFoundError as e:
         print(f"❌ Error: {e}")
-        print(f"Please run: python bulk_upload_employees.py --user {lastname}")
+        print(f"Please run: python .bob/skills/hr-document-upload/scripts/bulk_upload_employees.py --user {lastname}")
         return False
     
     print("\n" + "=" * 70)
@@ -273,9 +275,12 @@ def execute_upload_plan(lastname):
     session = create_graphql_session()
     
     folders_created = 0
+    folders_existing = 0
     documents_uploaded = 0
     errors = 0
     seeded_count = 0
+    failed_folders = set()
+    emp_stats = {emp['name']: {"uploaded": 0, "errors": 0} for emp in plan['employees']}
     
     for i, cmd in enumerate(commands, 1):
         print(f"[{i}/{len(commands)}] ", end="")
@@ -284,32 +289,69 @@ def execute_upload_plan(lastname):
             path_parts = cmd['path'].split('/')
             folder_name = path_parts[-1]
             parent_path = '/'.join(path_parts[:-1])
+            if not parent_path:
+                parent_path = '/'
             
-            print(f"Creating folder: {folder_name}")
-            if create_folder_graphql(session, folder_name, parent_path):
+            print(f"Creating folder: {folder_name} (parent: {parent_path})")
+            status = create_folder_graphql(session, folder_name, parent_path)
+            if status == "created":
                 folders_created += 1
+            elif status == "exists":
+                folders_existing += 1
             else:
+                failed_folders.add(cmd['path'])
                 errors += 1
         
         elif cmd['type'] == 'upload_document':
+            target_folder = cmd['target_folder']
+            emp_name = cmd.get('employee')
+            # Check if target folder failed creation
+            if any(target_folder == ff or target_folder.startswith(ff + '/') for ff in failed_folders):
+                print(f"  ❌ Skipping: target folder failed creation ({target_folder})")
+                errors += 1
+                if emp_name in emp_stats:
+                    emp_stats[emp_name]["errors"] += 1
+                continue
+
             print(f"Uploading: {cmd['filename']}")
             if upload_document_graphql(session, cmd):
                 documents_uploaded += 1
+                if emp_name in emp_stats:
+                    emp_stats[emp_name]["uploaded"] += 1
                 if cmd.get('seeded_error'):
                     seeded_count += 1
             else:
                 errors += 1
+                if emp_name in emp_stats:
+                    emp_stats[emp_name]["errors"] += 1
     
     print("\n" + "=" * 70)
     print("UPLOAD COMPLETE")
     print("=" * 70)
-    print(f"✅ Folders created: {folders_created}")
+    print(f"✅ Folders created: {folders_created} ({folders_existing} already existed)")
     print(f"✅ Documents uploaded: {documents_uploaded}")
     if seeded_count > 0:
         print(f"⚠️  Seeded errors applied: {seeded_count}")
     if errors > 0:
         print(f"❌ Errors encountered: {errors}")
     print("=" * 70)
+
+    # Save execution results
+    result_summary = {
+        "namespace": plan['namespace'],
+        "folders_created": folders_created,
+        "folders_existing": folders_existing,
+        "documents_uploaded": documents_uploaded,
+        "seeded_count": seeded_count,
+        "errors": errors,
+        "employee_stats": emp_stats
+    }
+    result_filename = f"upload_result_{lastname.lower()}.json"
+    try:
+        with open(result_filename, 'w', encoding='utf-8') as f:
+            json.dump(result_summary, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"⚠️  Warning: could not write execution summary {result_filename}: {e}", file=sys.stderr)
     
     return errors == 0
 
