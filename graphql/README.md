@@ -1,177 +1,187 @@
-# HRDocument GraphQL Recreation Set
+# GraphQL Metadata Recreation Set
 
-This folder contains a staged GraphQL recreation set for the custom [`HRDocument`](../HR_Document_Class_Description.md) class and its custom properties.
+This folder contains a staged set of GraphQL files that (re)create the full repository metadata schema:
+the [`HRDocument`](../HR_Document_Class_Description.md) class with all its properties, the 30 Dutch Tax Administration document classes, and the domain-specific properties for those Tax classes.
+
+---
 
 ## Files
 
-1. [`01-choice-lists.graphql`](01-choice-lists.graphql)
-   Optional choice lists for business-controlled string fields.
+| # | File | Type | Purpose |
+|---|---|---|---|
+| 01 | [`01-choice-lists.graphql`](01-choice-lists.graphql) | mutation | Creates choice lists for business-controlled HR string fields (JobRole, Department, etc.) |
+| 02 | [`02-property-templates.graphql`](02-property-templates.graphql) | mutation | Creates all custom property templates for `HRDocument` |
+| 03 | [`03-class-definition.graphql`](03-class-definition.graphql) | mutation | Creates the `HRDocument` class and binds the property templates from file 02 |
+| 04 | [`04-tax-class-definitions.graphql`](04-tax-class-definitions.graphql) | mutation | Creates the 30 Tax document class shells (name + description only, no properties yet) |
+| 05 | [`05-update-consolidation-candidates.graphql`](05-update-consolidation-candidates.graphql) | mutation | Rewrites the descriptions of the 5 consolidation-candidate Tax classes to plain Dutch so that their overlap with canonical classes is semantically apparent without being stated explicitly |
+| 06 | [`06-update-hrdocument-description.graphql`](06-update-hrdocument-description.graphql) | mutation | Sets the Dutch descriptive text on the `HRDocument` class itself |
+| 07 | [`07-count-hrdocument-properties.graphql`](07-count-hrdocument-properties.graphql) | **query** | Retrieves all property definitions on `HRDocument` for verification — **not a mutation; use `curl` directly** |
+| 09 | [`09-tax-property-templates.graphql`](09-tax-property-templates.graphql) | mutation | Creates 30 Dutch property templates for the Tax domain (e.g. `Belastingjaar`, `RSIN`, `BSN`, `IsCorrectie`, `Kenteken`, `DouaneAangifteNummer`) each with a Dutch descriptive text |
+| 10 | [`10-tax-class-properties.graphql`](10-tax-class-properties.graphql) | mutation | Binds the Tax property templates to all 30 Tax classes (≤ 10 properties each). The 5 consolidation-candidate classes receive a strict property subset of their canonical counterpart, making the redundancy visible by schema inspection |
+| 11 | [`11-contract-class-properties.graphql`](11-contract-class-properties.graphql) | mutation | Deletes the old `Contract` class (which carried HR-domain templates), creates 8 Dutch Contract property templates, and recreates the class with only those 8 domain-specific properties |
 
-2. [`02-property-templates.graphql`](02-property-templates.graphql)
-   Property template creation mutations for all custom HR properties.
+> **Why are files 05 and 06 not in the original execution order?**
+> They were added after the initial setup as follow-on patches. File 05 rewrites the 5 duplicate-candidate class descriptions to subtler Dutch prose (removing any explicit "consolidate me" wording), and file 06 adds a Dutch description to `HRDocument` itself. Both are **idempotent** — safe to run on an existing repository without side effects.
 
-3. [`03-class-definition.graphql`](03-class-definition.graphql)
-   Final class creation mutation that binds the custom property templates to the `HRDocument` class.
-
-4. [`04-tax-class-definitions.graphql`](04-tax-class-definitions.graphql)
-   Creates 30 Dutch Tax Administration document subclasses (BTW, loonheffingen, vennootschapsbelasting, douane, etc.). Independent — does not depend on files 01 or 02. Includes 5 intentional consolidation-candidate classes for lab exercises.
-
-7. [`07-count-hrdocument-properties.graphql`](07-count-hrdocument-properties.graphql)
-   Query (not a mutation) — retrieves all property definitions on `HRDocument` with their `isSearchable`, `isSystemOwned`, `isHidden`, `dataType`, and `cardinality` fields. Use to verify the total property count and searchable/non-searchable split. Run directly via `curl`; the `run_graphql.py` runner handles mutations only.
+---
 
 ## Runner
 
-Use [`graphql/run_graphql.py`](graphql/run_graphql.py) to execute any staged GraphQL file.
+Use [`run_graphql.py`](run_graphql.py) to execute any mutation file.
 
-1. Create either [`graphql/.env`](graphql/.env) or [`.env`](.env).
-2. Add these values:
-   - `USERNAME=...`
-   - `PASSWORD=...`
-   - `SERVER_URL=...`
-3. Run one stage at a time:
-   - `python graphql/run_graphql.py graphql/01-choice-lists.graphql`
-   - `python graphql/run_graphql.py graphql/02-property-templates.graphql`
-   - `python graphql/run_graphql.py graphql/03-class-definition.graphql`
-   - `python graphql/run_graphql.py graphql/04-tax-class-definitions.graphql`
+**Setup — do this once:**
+1. Create either `graphql/.env` or `.env` in the project root.
+2. Add these three values:
+   ```
+   USERNAME=your-username
+   PASSWORD=your-password
+   SERVER_URL=https://your-server/content-services-graphql/graphql
+   ```
 
-The runner reads credentials from the ignored dotenv file and sends each `mutation` block in sequence to the GraphQL endpoint.
+**Run a file:**
+```
+python graphql/run_graphql.py graphql/<filename>.graphql
+```
+
+The runner splits the file into individual `mutation` blocks and sends them one by one. It prints success/failure per mutation and exits non-zero if any mutation fails.
+
+> File 07 is a **query**, not a mutation. The runner only handles mutations. Use `curl` or the GraphQL explorer to run it.
+
+---
 
 ## Execution order
 
-Run the files in this exact order:
+### Scenario A — Fresh environment (nothing exists yet)
 
-1. [`01-choice-lists.graphql`](01-choice-lists.graphql)
-2. [`02-property-templates.graphql`](02-property-templates.graphql)
-3. [`03-class-definition.graphql`](03-class-definition.graphql)
-4. [`04-tax-class-definitions.graphql`](04-tax-class-definitions.graphql) — can also be run standalone; has no dependency on files 01–02
+Run every file in sequence:
+
+```
+python graphql/run_graphql.py graphql/01-choice-lists.graphql
+python graphql/run_graphql.py graphql/02-property-templates.graphql
+python graphql/run_graphql.py graphql/03-class-definition.graphql
+python graphql/run_graphql.py graphql/04-tax-class-definitions.graphql
+python graphql/run_graphql.py graphql/05-update-consolidation-candidates.graphql
+python graphql/run_graphql.py graphql/06-update-hrdocument-description.graphql
+python graphql/run_graphql.py graphql/09-tax-property-templates.graphql
+python graphql/run_graphql.py graphql/10-tax-class-properties.graphql
+python graphql/run_graphql.py graphql/11-contract-class-properties.graphql
+```
+
+**Why this order?**
+
+| Step | Depends on |
+|---|---|
+| 01 — choice lists | nothing |
+| 02 — HR property templates | choice list IDs from 01 |
+| 03 — HRDocument class | HR property template symbolic names from 02 |
+| 04 — Tax class shells | nothing (independent) |
+| 05 — Tax description patches | Tax classes must exist (04) |
+| 06 — HRDocument description patch | HRDocument class must exist (03) |
+| 09 — Tax property templates | nothing |
+| 10 — Tax class property bindings | Tax classes (04) + Tax property templates (09) |
+| 11 — Contract class rebuild | no class instances may exist; run before uploading lab documents |
+
+---
+
+### Scenario B — HR already set up, only Tax properties are missing
+
+The Tax class shells are already in the repository but have no properties yet:
+
+```
+python graphql/run_graphql.py graphql/09-tax-property-templates.graphql
+python graphql/run_graphql.py graphql/10-tax-class-properties.graphql
+```
+
+---
+
+### Scenario E — Rebuild the Contract class only
+
+Use this when the Contract class needs to be replaced with the proper Contracts-domain version.
+**Prerequisite:** all documents filed under the `Contract` class must be deleted first — FileNet will refuse to delete a class that has instances.
+
+```
+python graphql/run_graphql.py graphql/11-contract-class-properties.graphql
+```
+
+> The file handles the full sequence: delete old class → create 8 property templates → recreate class with only those 8 properties.
+
+---
+
+### Scenario C — Everything exists, apply description patches only
+
+The classes and properties are all in place but you want to update the class descriptions:
+
+```
+python graphql/run_graphql.py graphql/05-update-consolidation-candidates.graphql
+python graphql/run_graphql.py graphql/06-update-hrdocument-description.graphql
+```
+
+Both are idempotent — running them again on an already-patched repository is safe.
+
+---
+
+### Scenario D — Verify HRDocument property count (read-only check)
+
+File 07 is a query, not a mutation. Run it directly with `curl`:
+
+```bash
+curl -s -u "$USERNAME:$PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d @graphql/07-count-hrdocument-properties.graphql \
+  "$SERVER_URL"
+```
+
+---
+
+## Tax domain consolidation candidates
+
+Five Tax classes are intentionally seeded as consolidation candidates for the lab exercise. An AI Documentalist should identify them when asked *"which classes look like duplicates or legacy entries?"*
+
+| Consolidation candidate | Canonical counterpart | Redundancy signal |
+|---|---|---|
+| `AangifteBTWKwartaal` | `AangifteBTW` | Identical purpose; only filing frequency differs. Has 4 properties vs. 7 on the canonical class — missing `Belastingtijdvak` and `IsCorrectie`. |
+| `CorrectieAangifteLoonheffingen` | `AangifteLoonheffingen` | Correction variant with no differentiating data model. Has 3 properties vs. 6 — missing `Belastingtijdvak`, `AangifteDatum`, and `IsCorrectie`. |
+| `VoortaxatieVennootschapsbelasting` | `AangifteVennootschapsbelasting` | Preliminary vs. final filing. Has 3 properties vs. 6 — missing `AangifteDatum`, `VerschuldigdBedrag`, and `IsVoorlopig`. |
+| `VereenvoudigdeDouaneaangifte` | `Douaneaangifte` | Simplified AEO variant. Has 3 properties vs. 6 — missing `GoederenomschrijvingCode`, `VerschuldigdBedrag`, and `IsAEOProcedure`. |
+| `MotorrijtuigenbelastingAangifte` | `AangifteBPM` | Near-identical vehicle tax data model. Has 3 properties vs. 6 — missing `AangifteDatum`, `CO2UitstootGrKm`, and `BelastingsoortCode`. |
+
+The intentional property gap makes these classes detectable by schema inspection without any explicit "TODO" comment in the description.
+
+---
 
 ## Scope included
 
-Included from [`HR_Document_Class_Description.md`](../HR_Document_Class_Description.md):
+**HR domain:**
+- Custom class: `HRDocument`
+- Property groups: Employee Information, Employment Details, Organizational Structure, Dates, SAP integration, Salesforce integration, DocuFlow integration, Document Classification
 
-- Custom class:
-  - `HRDocument`
-- Custom property groups:
-  - Employee Information
-  - Employment Details
-  - Organizational Structure
-  - Dates
-  - SAP integration
-  - Salesforce integration
-  - DocuFlow integration
-  - Document Classification
-  - AI Properties
+**Tax domain:**
+- 30 document subclasses across: BTW, Inkomstenbelasting, Loonheffingen, Vennootschapsbelasting, Overige belastingen, Naleving & Controle, Financiële verslaggeving, Douane & Handel
+- 30 Dutch property templates with descriptive texts
 
-Not included:
-
+**Not included:**
 - Inherited base `Document` system properties
-- Tenant-specific security policies
-- Lifecycle policies
-- Storage policies
-- Records management configuration beyond inherited base behavior
-- ACLs, markings, subscriptions, and workflow wiring
+- Tenant-specific security or lifecycle policies
+- Storage policies, ACLs, markings, subscriptions, workflow wiring
+
+---
 
 ## Required replacements before execution
 
-Search and replace these placeholders before running the GraphQL:
+- `CHOICE_LIST_ID_*` placeholders in [`02-property-templates.graphql`](02-property-templates.graphql) — replace with actual choice list IDs created by file 01
+- Any mutation name or input field name that differs in your tenant's GraphQL schema
 
-- `REPOSITORY_ID` or any tenant-specific repository identifier already substituted in the files
-- `CHOICE_LIST_ID_*` placeholders in [`graphql/02-property-templates.graphql`](graphql/02-property-templates.graphql)
-- Any mutation name or input field that differs in your tenant GraphQL schema
+---
 
 ## Important assumptions
 
-The scripts are intentionally based on the metadata authoring example style and may require small schema adjustments because GraphQL metadata authoring capabilities can vary by deployment.
-
-Assumptions used in the files:
-
-- [`admCreateChoiceList`](graphql/01-choice-lists.graphql) exists in the tenant schema
-- [`admCreatePropertyTemplate`](graphql/02-property-templates.graphql) exists in the tenant schema
-- `createClassDefinition` exists in the tenant schema
-- `STRING`, `BOOLEAN`, `OBJECT`, and `DATE` are valid enum values
+- `admCreateChoiceList`, `admCreatePropertyTemplate`, `admCreateClassDefinition`, and `admUpdateClassDefinition` exist in the tenant schema
+- `STRING`, `BOOLEAN`, `OBJECT`, `DATE`, `INTEGER`, and `DOUBLE` are valid `dataType` enum values
 - `SINGLE` is the correct single-cardinality enum value
-- Type-specific settings are provided through subtype blocks such as `subPropertyTemplateStringProperties`, `subPropertyTemplateBooleanProperties`, `subPropertyTemplateDateTimeProperties`, and `subPropertyTemplateObjectProperties`
-- String property templates can bind a choice list inline through `choiceList { identifier: "..." }`
-- `parentClassIdentifier: "Document"` is accepted for a custom document subclass
+- String property templates can bind a choice list inline via `choiceList { identifier: "..." }`
 
-## Property mapping notes
-
-### Date properties
-The source description labels these as `DATE`:
-
-- `Birthdate`
-- `StartDate`
-- `TerminationDate`
-- `docuflowTimestamp`
-- `GenaiDateIndexed`
-
-The scripts model them using `DATE`, with `subPropertyTemplateDateTimeProperties` used for date-only handling where appropriate.
-
-### Object property
-`SfSalesforceRelationships` is modeled as:
-
-- `dataType: OBJECT`
-- `allowsForeignObject: true`
-- `isSearchable: false`
-
-This matches the source description that marks it as object-valued and non-searchable.
-
-### Boolean properties
-The following are modeled with subtype boolean settings and defaults of `false`:
-
-- `SapLinkTrigger`
-- `SFLinkTrigger`
-
-Remove the default if your tenant does not permit it in [`admCreatePropertyTemplate`](graphql/02-property-templates.graphql).
-
-## Choice list notes
-
-Choice lists are included for business-controlled fields. They now use the tenant-style [`admCreateChoiceList`](graphql/01-choice-lists.graphql) mutation structure supplied by the user, and the related string property templates in [`graphql/02-property-templates.graphql`](graphql/02-property-templates.graphql) bind them inline by `choiceList.identifier`. Some are directly grounded in the source document, while others are suggested seed lists for portability.
-
-Directly grounded in the source:
-
-- `DocType`
-- `Department`
-- `JobRole`
-- `Location`
-
-Suggested starter lists that should be reviewed before production use:
-
-- `JobStatus`
-- `EmploymentType`
-- `CurrentStatus`
-- `DocumentCategory`
-- `ClassDocType`
-
-If you do not want strict value control on a field, remove the `choiceList` block from its property template mutation in [`graphql/02-property-templates.graphql`](graphql/02-property-templates.graphql).
-
-## Validation checklist
-
-Before execution:
-
-- Verify the tenant supports metadata authoring mutations
-- Verify mutation names and input object names in the GraphQL schema explorer
-- Confirm enum names for data type and cardinality
-- Confirm whether object property templates are supported in the target tenant
-- Replace all `CHOICE_LIST_ID_*` placeholders in [`graphql/02-property-templates.graphql`](graphql/02-property-templates.graphql) with actual created choice list ids
-- Confirm whether class-property binding requires additional flags such as order or required-classification metadata
-
-After execution:
-
-- Query the created choice lists
-- Query the created property templates
-- Query the created `HRDocument` class definition
-- Confirm each property is attached to the class
-- Confirm searchable flags are set as intended
-
-## Recommended rollout approach
-
-1. Run the choice list script first.
-2. Run the property template script.
-3. Validate templates created successfully.
-4. Run the class definition script.
-5. Query back the resulting class and compare it to [`HR_Document_Class_Description.md`](../HR_Document_Class_Description.md).
+---
 
 ## Source
 
-Primary source: [`HR_Document_Class_Description.md`](../HR_Document_Class_Description.md)
+Primary source for HR properties: [`HR_Document_Class_Description.md`](../HR_Document_Class_Description.md)

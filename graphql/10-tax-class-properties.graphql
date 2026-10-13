@@ -1,0 +1,605 @@
+# Tax domain klasse-eigenschappen - Stage 10
+# Bindt de eigenschapstemplates uit bestand 09 aan de 30 belastingklassen.
+# Elke klasse krijgt maximaal 10 eigenschappen die aansluiten op het documenttype.
+#
+# Consolidatiekandidaten zijn gemarkeerd met ⚠️ CONSOLIDATIEKANDIDAAT.
+# Deze klassen hebben bewust een kleinere eigenschappenset dan hun canonieke tegenhanger,
+# zodat de overlap zichtbaar is bij schema-inspectie:
+#   AangifteBTWKwartaal              ⚠️ → subset van AangifteBTW
+#   CorrectieAangifteLoonheffingen   ⚠️ → subset van AangifteLoonheffingen
+#   VoortaxatieVennootschapsbelasting ⚠️ → subset van AangifteVennootschapsbelasting
+#   VereenvoudigdeDouaneaangifte     ⚠️ → subset van Douaneaangifte
+#   MotorrijtuigenbelastingAangifte  ⚠️ → subset van AangifteBPM
+#
+# Uitvoeringsvolgorde: uitvoeren NA bestand 09.
+# Runner: python graphql/run_graphql.py graphql/10-tax-class-properties.graphql
+
+# ---------------------------------------------------------------------------
+# BTW-AANGIFTEN (4 klassen)
+# ---------------------------------------------------------------------------
+
+# Canonieke klasse: 7 eigenschappen incl. Belastingtijdvak en IsCorrectie.
+mutation UpdateAangifteBTWProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteBTW"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Belastingtijdvak" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }             isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "TeruggaafBedrag" }  isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsCorrectie" }      isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ⚠️ CONSOLIDATIEKANDIDAAT — samenvoegen met AangifteBTW.
+# Heeft slechts 4 van de 7 eigenschappen van AangifteBTW.
+# Ontbrekend: Belastingtijdvak (overbodig als AangifteBTW een Periode-veld krijgt) en IsCorrectie.
+mutation UpdateAangifteBTWKwartaalProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteBTWKwartaal"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }             isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "TeruggaafBedrag" }  isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateBTWTeruggaafVerzoekProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "BTWTeruggaafVerzoek"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Belastingtijdvak" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }             isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "TeruggaafBedrag" }  isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateBTWCorrectiemeldingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "BTWCorrectiemelding"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Belastingtijdvak" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsCorrectie" }        isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# INKOMSTENBELASTING (2 klassen)
+# ---------------------------------------------------------------------------
+
+mutation UpdateAangifteInkomstenbelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteInkomstenbelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }                isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsVoorlopig" }        isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateVoorlopigAanslagIBProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "VoorlopigAanslagIB"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }                isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsVoorlopig" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AanslagNummer" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BezwaarDeadline" }    isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# LOONHEFFINGEN (3 klassen)
+# ---------------------------------------------------------------------------
+
+# Canonieke klasse: 6 eigenschappen incl. Belastingtijdvak en IsCorrectie.
+mutation UpdateAangifteLoonheffingenProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteLoonheffingen"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Belastingtijdvak" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsCorrectie" }        isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ⚠️ CONSOLIDATIEKANDIDAAT — samenvoegen met AangifteLoonheffingen.
+# Heeft slechts 3 van de 6 eigenschappen van AangifteLoonheffingen.
+# Ontbrekend: Belastingtijdvak, AangifteDatum en IsCorrectie.
+# Een IsCorrectie boolean op AangifteLoonheffingen maakt deze klasse overbodig.
+mutation UpdateCorrectieAangifteLoonheffingenProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "CorrectieAangifteLoonheffingen"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateLoonbelastingVerklaringProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "LoonbelastingVerklaring"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Belastingtijdvak" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# VENNOOTSCHAPSBELASTING (2 klassen)
+# ---------------------------------------------------------------------------
+
+# Canonieke klasse: 6 eigenschappen incl. AangifteDatum en IsVoorlopig.
+mutation UpdateAangifteVennootschapsbelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteVennootschapsbelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BelastbareWinst" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsVoorlopig" }        isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ⚠️ CONSOLIDATIEKANDIDAAT — samenvoegen met AangifteVennootschapsbelasting.
+# Heeft slechts 3 van de 6 eigenschappen van AangifteVennootschapsbelasting.
+# Ontbrekend: AangifteDatum, VerschuldigdBedrag en IsVoorlopig.
+# Een IsVoorlopig boolean op AangifteVennootschapsbelasting maakt deze klasse overbodig.
+mutation UpdateVoortaxatieVennootschapsbelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "VoortaxatieVennootschapsbelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BelastbareWinst" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# OVERIGE BELASTINGEN (4 klassen)
+# ---------------------------------------------------------------------------
+
+mutation UpdateAangifteDividendbelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteDividendbelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "DividendBedrag" }     isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# Canonieke klasse: 6 eigenschappen incl. CO2UitstootGrKm en BelastingsoortCode.
+mutation UpdateAangifteBPMProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteBPM"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Kenteken" }           isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "CO2UitstootGrKm" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BelastingsoortCode" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ⚠️ CONSOLIDATIEKANDIDAAT — mogelijk samenvoegen met AangifteBPM.
+# Heeft slechts 3 van de 6 eigenschappen van AangifteBPM.
+# Ontbrekend: AangifteDatum, CO2UitstootGrKm en BelastingsoortCode.
+# BPM dekt registratie van nieuwe voertuigen; MRB dekt periodieke belasting op bestaande voertuigen.
+# De data-modellen zijn nagenoeg identiek — gebruiksanalyse vereist.
+mutation UpdateMotorrijtuigenbelastingAangifteProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "MotorrijtuigenbelastingAangifte"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Kenteken" }           isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateAangifteSuccessieRechtProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AangifteSuccessierecht"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }                  isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "NalatenschapWaarde" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" }   isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# NALEVING EN CONTROLE (6 klassen)
+# ---------------------------------------------------------------------------
+
+mutation UpdateBelastingControleRapportProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "BelastingControleRapport"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "ControleJaar" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }                isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }                 isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }       isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" }  isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateFiscaalAdviesrapportProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "FiscaalAdviesrapport"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }  isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }           isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }  isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateAanslagBiljetProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "AanslagBiljet"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AanslagNummer" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }                isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BezwaarDeadline" }    isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateBezwaarschriftBelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "BezwaarschriftBelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AanslagNummer" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }             isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BezwaarDeadline" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateBeroepschriftBelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "BeroepschriftBelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AanslagNummer" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "AangifteDatum" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BSN" }                  isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BeroepInstantie" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ZaaknummerRechtbank" }  isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateFiscaalRulingDocumentProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "FiscaalRulingDocument"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "KenmerkBelastingdienst" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GeldigVanaf" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GeldigTot" }              isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }                   isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# FINANCIËLE VERSLAGGEVING (3 klassen)
+# ---------------------------------------------------------------------------
+
+mutation UpdateJaarrekeningDocumentProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "JaarrekeningDocument"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Boekjaar" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BelastbareWinst" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateKwartaalrapportBelastingProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "KwartaalrapportBelasting"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Belastingjaar" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "Belastingtijdvak" }   isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }               isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateWinstEnVerliesrekeningProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "WinstEnVerliesrekening"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "Boekjaar" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "RSIN" }                isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "BelastbareWinst" }     isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" }  isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ---------------------------------------------------------------------------
+# DOUANE EN HANDEL (6 klassen)
+# ---------------------------------------------------------------------------
+
+# Canonieke klasse: 6 eigenschappen incl. VerschuldigdBedrag en IsAEOProcedure.
+mutation UpdateDouaneaangifteProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "Douaneaangifte"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "AangifteDatum" }           isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "DouaneAangifteNummer" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "LandVanOorsprong" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GoederenomschrijvingCode" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" }      isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "IsAEOProcedure" }          isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+# ⚠️ CONSOLIDATIEKANDIDAAT — samenvoegen met Douaneaangifte.
+# Heeft slechts 3 van de 6 eigenschappen van Douaneaangifte.
+# Ontbrekend: GoederenomschrijvingCode, VerschuldigdBedrag en IsAEOProcedure.
+# Een IsAEOProcedure boolean op Douaneaangifte maakt deze klasse overbodig.
+mutation UpdateVereenvoudigdeDouaneaangifteProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "VereenvoudigdeDouaneaangifte"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "AangifteDatum" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "DouaneAangifteNummer" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "LandVanOorsprong" }     isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateInvoerAangifteProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "InvoerAangifte"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "AangifteDatum" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "DouaneAangifteNummer" }     isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "LandVanOorsprong" }         isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GoederenomschrijvingCode" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "VerschuldigdBedrag" }       isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateUitvoerAangifteProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "UitvoerAangifte"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "AangifteDatum" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "DouaneAangifteNummer" }     isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "LandVanOorsprong" }         isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GoederenomschrijvingCode" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateTransitDocumentProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "TransitDocument"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "AangifteDatum" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "MRNNummer" }                isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "LandVanOorsprong" }         isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GoederenomschrijvingCode" } isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}
+
+mutation UpdateOrigineVerklaringProperties {
+  admUpdateClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "OrigineVerklaring"
+    classDefinitionProperties: {
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "AangifteDatum" }            isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "LandVanOorsprong" }         isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "GoederenomschrijvingCode" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "KenmerkBelastingdienst" }   isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}

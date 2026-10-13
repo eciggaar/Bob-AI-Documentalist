@@ -1,0 +1,202 @@
+# Contract klasse — verwijderen en opnieuw aanmaken - Stage 11
+# Verwijdert de bestaande Contract-klasse (die de HR-templates EmployeeID, FirstName
+# en LastName bevat) en maakt een nieuwe schone versie aan met uitsluitend 8
+# Nederlandstalige contracteigenschappen.
+#
+# Lab 3 compatibiliteit:
+#   De uploadscript (.bob/skills/hr-document-upload/scripts/execute_bulk_upload.py)
+#   uploadt het arbeidscontract van emp[1] als klasse "Contract" met properties = [].
+#   Er worden dus GEEN eigenschapswaarden gezet op het Contract-document.
+#   De fout blijft detecteerbaar: geen EmployeeID, Department of DocType aanwezig.
+#
+# Uitvoeringsvolgorde:
+#   1. DeleteContractClass         — verwijdert de bestaande klasse
+#   2. Create*PropertyTemplate     — maakt 8 contracteigenschapstemplates aan
+#   3. CreateContractClass         — maakt de klasse opnieuw aan met de 8 templates
+#
+# De runner voert mutaties sequentieel uit; de volgorde in dit bestand is dus bepalend.
+# Runner: python graphql/run_graphql.py graphql/11-contract-class-properties.graphql
+
+# ---------------------------------------------------------------------------
+# STAP 1 — VERWIJDER DE BESTAANDE CONTRACT-KLASSE
+# ---------------------------------------------------------------------------
+
+mutation DeleteContractClass {
+  admDeleteClassDefinition(
+    repositoryIdentifier: "OS1"
+    identifier: "Contract"
+    updateSequenceNumber: 0
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# STAP 2 — MAAK 8 CONTRACTEIGENSCHAPSTEMPLATES AAN
+# ---------------------------------------------------------------------------
+
+mutation CreateContractNummerPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractNummer"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractnummer" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het unieke interne referentienummer waarmee het contract in de administratie wordt geïdentificeerd." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractSoortPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractSoort"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractsoort" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het type contract, bijvoorbeeld leveringsovereenkomst, dienstverleningsovereenkomst, NDA of raamcontract." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractPartijPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractPartij"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractpartij" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De naam van de externe partij (leverancier, klant of partner) waarmee het contract is gesloten." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractIngangsdatumPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DATE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractIngangsdatum"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractingangsdatum" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De datum waarop het contract in werking treedt en de rechten en verplichtingen van kracht worden." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractEinddatumPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DATE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractEinddatum"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contracteinddatum" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De datum waarop het contract afloopt of automatisch wordt beëindigd, tenzij tijdig verlengd." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractWaardePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DOUBLE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractWaarde"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractwaarde" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De totale financiële waarde van het contract in euro's over de volledige looptijd." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractStatusPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractStatus"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractstatus" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De huidige status van het contract, bijvoorbeeld concept, actief, verlopen of opgezegd." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateContractEigenaarPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ContractEigenaar"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contracteigenaar" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De naam of afdeling binnen de organisatie die verantwoordelijk is voor het beheer en de naleving van het contract." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# STAP 3 — MAAK DE CONTRACT-KLASSE OPNIEUW AAN MET ALLEEN DE 8 CONTRACTEIGENSCHAPPEN
+# ---------------------------------------------------------------------------
+
+mutation CreateContractClass {
+  admCreateClassDefinition(
+    repositoryIdentifier: "OS1"
+    superclassIdentifier: "Document"
+    classDefinitionProperties: {
+      symbolicName: "Contract"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contract" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Contractdocument vastgelegd in het contractbeheersysteem. Omvat overeenkomsten met leveranciers, klanten en partners, zoals leveringsovereenkomsten, dienstverleningscontracten, NDA's en raamcontracten." }]
+      }
+      propertyDefinitions: {
+        modify: [
+          { propertyTemplate: { identifier: "ContractNummer" }       isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractSoort" }        isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractPartij" }       isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractIngangsdatum" } isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractEinddatum" }    isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractWaarde" }       isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractStatus" }       isValueRequired: false isHidden: false }
+          { propertyTemplate: { identifier: "ContractEigenaar" }     isValueRequired: false isHidden: false }
+        ]
+      }
+    }
+  ) { id symbolicName }
+}

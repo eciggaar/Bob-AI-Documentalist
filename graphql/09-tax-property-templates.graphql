@@ -1,0 +1,559 @@
+# Tax domain property templates - Stage 9
+# Maakt 30 Nederlandse eigenschapstemplates aan voor de belasting- en douanedocumentklassen.
+# Elk template heeft een Nederlandse weergavenaam en een beschrijvende tekst (nl-nl).
+# Deze templates worden in bestand 10 gebonden aan de 30 belastingklassen.
+#
+# Uitvoeringsvolgorde: uitvoeren VOOR bestand 10.
+# De 30 belastingklassen zijn al aanwezig; bestanden 01-04 hoeven niet opnieuw te worden uitgevoerd.
+#
+# Runner: python graphql/run_graphql.py graphql/09-tax-property-templates.graphql
+
+# ---------------------------------------------------------------------------
+# ALGEMENE AANGIFTE-EIGENSCHAPPEN
+# ---------------------------------------------------------------------------
+
+mutation CreateBelastingjaarPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: LONG
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "Belastingjaar"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Belastingjaar" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het kalenderjaar waarop de aangifte of het document betrekking heeft." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateBelastingtijdvakPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "Belastingtijdvak"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Belastingtijdvak" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het tijdvak waarover belasting wordt aangegeven, bijvoorbeeld maand, kwartaal of jaar." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateAangifteDatumPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DATE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "AangifteDatum"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Aangifte datum" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De datum waarop de aangifte officieel is ingediend bij de Belastingdienst of douane-autoriteit." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateBelastingplichtigeNaamPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "BelastingplichtigeNaam"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Belastingplichtige naam" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De naam van de natuurlijke persoon of rechtspersoon die de aangifte indient." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# IDENTIFICATIENUMMERS
+# ---------------------------------------------------------------------------
+
+mutation CreateRSINPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "RSIN"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "RSIN" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Rechtspersonen en Samenwerkingsverbanden Informatienummer — uniek fiscaal identificatienummer voor rechtspersonen en organisaties." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateBSNPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "BSN"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "BSN" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Burgerservicenummer — uniek persoonsnummer voor natuurlijke personen in de Nederlandse overheidsadministratie." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# FINANCIËLE BEDRAGEN
+# ---------------------------------------------------------------------------
+
+mutation CreateVerschuldigdBedragPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DOUBLE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "VerschuldigdBedrag"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Verschuldigd bedrag" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het totaalbedrag aan belasting dat over het aangegeven tijdvak of jaar verschuldigd is, in euro's." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateTeruggaafBedragPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DOUBLE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "TeruggaafBedrag"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Teruggaaf bedrag" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het bedrag dat de Belastingdienst aan de belastingplichtige terug dient te betalen over het betreffende tijdvak." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# STATUSVLAGGEN (BOOLEAN)
+# ---------------------------------------------------------------------------
+
+mutation CreateIsCorrectiePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: BOOLEAN
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "IsCorrectie"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Is correctie" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Geeft aan of dit document een correctie betreft op een eerder ingediende aangifte over hetzelfde tijdvak." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateIsVoorlopigPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: BOOLEAN
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "IsVoorlopig"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Is voorlopig" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Geeft aan of het om een voorlopige aangifte of aanslag gaat die later door een definitieve versie wordt gevolgd." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateIsAEOProcedurePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: BOOLEAN
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "IsAEOProcedure"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Is AEO-procedure" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Geeft aan of de aangifte is ingediend via de vereenvoudigde procedure voor erkende marktdeelnemers met AEO-status." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# AANSLAG- EN BEZWAAREIGENSCHAPPEN
+# ---------------------------------------------------------------------------
+
+mutation CreateBelastingsoortCodePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "BelastingsoortCode"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Belastingsoort code" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Code die de soort belasting identificeert waarvoor de aangifte is ingediend, conform de indeling van de Belastingdienst." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateAanslagNummerPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "AanslagNummer"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Aanslagnummer" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het unieke kenmerk van de belastingaanslag zoals vermeld op het aanslagbiljet van de Belastingdienst." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateBezwaarDeadlinePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DATE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "BezwaarDeadline"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Bezwaar deadline" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De uiterste datum waarop bezwaar kan worden ingediend tegen de belastingaanslag of beschikking, conform de Awb." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateControleJaarPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: LONG
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ControleJaar"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Controlejaar" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het boekjaar of belastingjaar dat onderwerp is van het boekenonderzoek of de belastingcontrole." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# RULING- EN BESCHIKKINGSEIGENSCHAPPEN
+# ---------------------------------------------------------------------------
+
+mutation CreateKenmerkBelastingdienstPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "KenmerkBelastingdienst"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Kenmerk Belastingdienst" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het unieke referentiekenmerk dat de Belastingdienst heeft toegekend aan een ruling, beschikking of correspondentie." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateGeldigVanafPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DATE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "GeldigVanaf"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Geldig vanaf" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De ingangsdatum vanaf welke een ruling, beschikking of overeenkomst rechtskracht heeft." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateGeldigTotPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DATE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "GeldigTot"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Geldig tot" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De einddatum tot welke een ruling, beschikking of overeenkomst van toepassing is." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# VOERTUIGEIGENSCHAPPEN (BPM / MRB)
+# ---------------------------------------------------------------------------
+
+mutation CreateKentekenPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "Kenteken"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Kenteken" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het Nederlandse kenteken van het motorrijtuig waarop de aangifte betrekking heeft." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateCO2UitstootGrKmPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: LONG
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "CO2UitstootGrKm"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "CO2-uitstoot (gr/km)" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De CO2-uitstoot van het voertuig in gram per kilometer, als grondslag voor de BPM-berekening." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# DOUANE-EIGENSCHAPPEN
+# ---------------------------------------------------------------------------
+
+mutation CreateDouaneAangifteNummerPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "DouaneAangifteNummer"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Douane-aangiftenummer" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het unieke identificatienummer van de douaneaangifte, toegekend door het douanesysteem na indiening." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateLandVanOorsprongPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "LandVanOorsprong"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Land van oorsprong" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het land waar de goederen zijn vervaardigd of van oorsprong zijn, conform de regels van de niet-preferentiële oorsprong." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateGoederenomschrijvingCodePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "GoederenomschrijvingCode"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Goederenomschrijving (HS-code)" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De geharmoniseerde systeemcode (HS-code) die de goederensoort internationaal classificeert voor douanedoeleinden." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateMRNNummerPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "MRNNummer"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "MRN-nummer" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het Master Reference Number dat door het douanesysteem wordt toegekend aan een transit- of uitvoeraangifte." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# FINANCIËLE VERSLAGGEVING
+# ---------------------------------------------------------------------------
+
+mutation CreateBoekjaarPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: LONG
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "Boekjaar"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Boekjaar" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het boekjaar waarop de jaarrekening of de winst- en verliesrekening betrekking heeft." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateBelastbareWinstPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DOUBLE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "BelastbareWinst"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Belastbare winst" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De fiscale winst na correcties en aftrekposten die als grondslag dient voor de berekening van de vennootschapsbelasting." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateDividendBedragPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DOUBLE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "DividendBedrag"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Dividendbedrag" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het totale dividendbedrag dat door de vennootschap aan aandeelhouders is of wordt uitgekeerd en waarover dividendbelasting is verschuldigd." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateNalatenschapWaardePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: DOUBLE
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "NalatenschapWaarde"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Nalatenschap- / schenkingswaarde" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De waarde van de nalatenschap of de schenking die als grondslag dient voor de berekening van de verschuldigde erf- of schenkbelasting." }]
+      }
+    }
+  ) { id }
+}
+
+# ---------------------------------------------------------------------------
+# BEROEP EN RECHTBANK
+# ---------------------------------------------------------------------------
+
+mutation CreateBeroepInstantiePropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "BeroepInstantie"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Beroep instantie" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "De rechtbank of het hof waarbij het beroepschrift aanhangig is gemaakt, bijvoorbeeld Rechtbank Noord-Holland of Gerechtshof Amsterdam." }]
+      }
+    }
+  ) { id }
+}
+
+mutation CreateZaaknummerRechtbankPropertyTemplate {
+  admCreatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    dataType: STRING
+    propertyTemplateProperties: {
+      cardinality: SINGLE
+      symbolicName: "ZaaknummerRechtbank"
+      displayNames: {
+        replace: [{ localeName: "nl-nl", localizedText: "Zaaknummer rechtbank" }]
+      }
+      descriptiveTexts: {
+        replace: [{ localeName: "nl-nl", localizedText: "Het door de rechtbank of het hof toegekende zaaknummer waarmee de beroepsprocedure wordt geregistreerd." }]
+      }
+    }
+  ) { id }
+}
