@@ -11,7 +11,8 @@
         "USERNAME": "cpmanager",
         "PASSWORD": "<YOUR_PASSWORD>",
         "SERVER_URL": "<YOUR_GRAPHQL_ENDPOINT>",
-        "OBJECT_STORE": "OS1"
+        "OBJECT_STORE": "OS1",
+        "LOCALE": "en-US"
       }
     },
     "property-extraction-cs-mcp-server": {
