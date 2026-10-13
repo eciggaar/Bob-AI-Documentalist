@@ -1,0 +1,549 @@
+# Update HRDocument property template descriptions - Stage 12
+# Sets an en-us descriptiveText on each of the 36 custom HRDocument property
+# templates created by file 02. Use this on a repository where file 02 has already
+# been run (re-running file 02 would fail on duplicate symbolic names).
+#
+# Idempotent: descriptiveTexts uses "replace", so re-running is safe.
+# Descriptions are identical to those in file 02.
+#
+# Runner: python graphql/run_graphql.py graphql/12-update-hr-property-descriptions.graphql
+
+mutation UpdateFirstNamePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "FirstName"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's legal first name as recorded in the HR system." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateLastNamePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "LastName"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's legal last name (family name) as recorded in the HR system." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdatePersonalIDPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "PersonalID"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's national personal identification number (e.g. BSN or passport number)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateBirthdatePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "Birthdate"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's date of birth." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateEmployeeIDPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "EmployeeID"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The unique identifier assigned to the employee in the HR system." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateJobRolePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "JobRole"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's job role title (e.g. Software Engineer, HR Business Partner)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateJobFunctionPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "JobFunction"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The broader functional area to which the job role belongs (e.g. Engineering, Finance, Sales)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateJobCodePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "JobCode"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The alphanumeric code identifying the employee's job classification in the HR system." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateJobLevelPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "JobLevel"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The grade or seniority level of the job (e.g. Junior, Senior, Principal)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateJobStatusPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "JobStatus"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Indicates whether the job position is active, on leave, or terminated." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateEmploymentTypePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "EmploymentType"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The nature of the employment contract (e.g. Full-time, Part-time, Contractor, Intern)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateCurrentStatusPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "CurrentStatus"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The current HR status of the employee (e.g. Active, Inactive, On Leave)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateCompanyPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "Company"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The legal entity or company name that employs this individual." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateCompanyCodePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "CompanyCode"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The short alphanumeric code identifying the employing legal entity in the ERP system." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateBusinessUnitPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "BusinessUnit"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The business unit within the organisation to which the employee belongs." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateDivisionPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "Division"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The division or sub-organisation within the company to which the employee is assigned." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateDepartmentPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "Department"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The department within the business unit where the employee works." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateCostCenterPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "CostCenter"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The cost centre code to which the employee's costs are allocated for financial reporting." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateLocationPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "Location"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The physical or geographic location where the employee is based." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateStartDatePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "StartDate"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The date on which the employee's current contract or position started." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateTerminationDatePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "TerminationDate"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The date on which the employee's contract or employment ended." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSAPEmployeeIDPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SAPEmployeeID"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's personnel number as stored in SAP HR." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSapLinkTriggerPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SapLinkTrigger"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Boolean flag that triggers the synchronisation workflow linking this document to the corresponding SAP record." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSapLinkedPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "sapLinked"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Indicates whether the document has been successfully linked to a SAP record." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSAPDocIdPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SAPDocId"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The document identifier assigned by SAP to this object in the ArchiveLink repository." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSAPDocProtPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SAPDocProt"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The SAP document protection level indicating the retention and access rights applied by SAP." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSAPCompsPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SAPComps"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The list of SAP component identifiers associated with this document." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSAPContTypePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SAPContType"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The SAP content type code that classifies this document within the ArchiveLink content repository." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSAPCompVersionPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SAPCompVersion"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The version number of the SAP component associated with this document." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSFLinkTriggerPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SFLinkTrigger"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Boolean flag that triggers the synchronisation workflow linking this document to the corresponding Salesforce record." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateSfSalesforceRelationshipsPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "SfSalesforceRelationships"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Object reference linking this document to one or more related Salesforce records." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateDocuflowTimestampPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "docuflowTimestamp"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The date and time at which the Docuflow process last acted on this document." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateDocuflowUsernamePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "docuflowUsername"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The username of the Docuflow process or user account that last processed this document." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateDocTypePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "DocType"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The document type label used to classify the kind of HR document (e.g. Contract, Certificate, Evaluation)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateDocumentCategoryPropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "DocumentCategory"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The high-level category grouping the document (e.g. Personal, Employment, Training)." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}
+
+mutation UpdateClassDocTypePropertyTemplateDescription {
+  admUpdatePropertyTemplate(
+    repositoryIdentifier: "OS1"
+    identifier: "ClassDocType"
+    propertyTemplateProperties: {
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The document type as defined per the class hierarchy, used for routing and classification rules." }]
+      }
+    }
+  ) {
+    id
+    symbolicName
+  }
+}

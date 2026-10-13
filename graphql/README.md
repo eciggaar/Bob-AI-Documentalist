@@ -19,9 +19,10 @@ the [`HRDocument`](../HR_Document_Class_Description.md) class with all its prope
 | 09 | [`09-tax-property-templates.graphql`](09-tax-property-templates.graphql) | mutation | Creates 30 Dutch property templates for the Tax domain (e.g. `Belastingjaar`, `RSIN`, `BSN`, `IsCorrectie`, `Kenteken`, `DouaneAangifteNummer`) each with a Dutch descriptive text |
 | 10 | [`10-tax-class-properties.graphql`](10-tax-class-properties.graphql) | mutation | Binds the Tax property templates to all 30 Tax classes (≤ 10 properties each). The 5 consolidation-candidate classes receive a strict property subset of their canonical counterpart, making the redundancy visible by schema inspection |
 | 11 | [`11-contract-class-properties.graphql`](11-contract-class-properties.graphql) | mutation | Deletes the old `Contract` class (which carried HR-domain templates), creates 8 Dutch Contract property templates, and recreates the class with only those 8 domain-specific properties |
+| 12 | [`12-update-hr-property-descriptions.graphql`](12-update-hr-property-descriptions.graphql) | mutation | **Patch only — not needed for fresh installs.** Sets an en-us descriptive text on each of the 36 custom `HRDocument` property templates. Use on repositories where file 02 was already run without descriptions |
 
-> **Why are files 05 and 06 not in the original execution order?**
-> They were added after the initial setup as follow-on patches. File 05 rewrites the 5 duplicate-candidate class descriptions to subtler Dutch prose (removing any explicit "consolidate me" wording), and file 06 adds a Dutch description to `HRDocument` itself. Both are **idempotent** — safe to run on an existing repository without side effects.
+> **Why are files 05, 06, and 12 not in the Scenario A execution order?**
+> They were added as follow-on patches after the initial setup. Files 05 and 06 update class descriptions. File 12 backfills the en-us property descriptions for the 36 `HRDocument` property templates — unnecessary on a fresh install because file 02 now includes those descriptions. All three are **idempotent** — safe to run on an existing repository without side effects.
 
 ---
 
@@ -109,14 +110,24 @@ python graphql/run_graphql.py graphql/11-contract-class-properties.graphql
 
 ### Scenario C — Everything exists, apply description patches only
 
-The classes and properties are all in place but you want to update the class descriptions:
+The classes and properties are all in place but you want to update descriptions.
 
+**Tax class descriptions:**
 ```
 python graphql/run_graphql.py graphql/05-update-consolidation-candidates.graphql
+```
+
+**HRDocument class description (Dutch):**
+```
 python graphql/run_graphql.py graphql/06-update-hrdocument-description.graphql
 ```
 
-Both are idempotent — running them again on an already-patched repository is safe.
+**HRDocument property descriptions (English — patch for repositories where file 02 ran without them):**
+```
+python graphql/run_graphql.py graphql/12-update-hr-property-descriptions.graphql
+```
+
+All are idempotent — running them again on an already-patched repository is safe.
 
 ---
 
@@ -175,7 +186,7 @@ The intentional property gap makes these classes detectable by schema inspection
 
 ## Important assumptions
 
-- `admCreateChoiceList`, `admCreatePropertyTemplate`, `admCreateClassDefinition`, and `admUpdateClassDefinition` exist in the tenant schema
+- `admCreateChoiceList`, `admCreatePropertyTemplate`, `admUpdatePropertyTemplate`, `admCreateClassDefinition`, and `admUpdateClassDefinition` exist in the tenant schema
 - `STRING`, `BOOLEAN`, `OBJECT`, `DATE`, `INTEGER`, and `DOUBLE` are valid `dataType` enum values
 - `SINGLE` is the correct single-cardinality enum value
 - String property templates can bind a choice list inline via `choiceList { identifier: "..." }`

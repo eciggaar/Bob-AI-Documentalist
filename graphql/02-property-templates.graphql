@@ -25,7 +25,9 @@ mutation CreateFirstNamePropertyTemplate {
         ]
       }
       symbolicName: "FirstName"
-
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's legal first name as recorded in the HR system." }]
+      }
     }
   ) {
     id
@@ -47,7 +49,9 @@ mutation CreateLastNamePropertyTemplate {
         ]
       }
       symbolicName: "LastName"
-
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's legal last name (family name) as recorded in the HR system." }]
+      }
     }
   ) {
     id
@@ -69,7 +73,9 @@ mutation CreatePersonalIDPropertyTemplate {
         ]
       }
       symbolicName: "PersonalID"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's national personal identification number (e.g. BSN or passport number)." }]
+      }
     }
   ) {
     id
@@ -91,7 +97,9 @@ mutation CreateBirthdatePropertyTemplate {
         ]
       }
       symbolicName: "Birthdate"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's date of birth." }]
+      }
     }
   ) {
     id
@@ -113,7 +121,9 @@ mutation CreateEmployeeIDPropertyTemplate {
         ]
       }
       symbolicName: "EmployeeID"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The unique identifier assigned to the employee in the HR system." }]
+      }
     }
   ) {
     id
@@ -135,6 +145,9 @@ mutation CreateJobRolePropertyTemplate {
         ]
       }
       symbolicName: "JobRole"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's job role title (e.g. Software Engineer, HR Business Partner)." }]
+      }
       choiceList: {
         identifier: "{A0EEE560-0000-C3B3-9E22-2382F64846A4}"
       }
@@ -160,7 +173,9 @@ mutation CreateJobFunctionPropertyTemplate {
         ]
       }
       symbolicName: "JobFunction"
-   
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The broader functional area to which the job role belongs (e.g. Engineering, Finance, Sales)." }]
+      }
     }
   ) {
     id
@@ -182,7 +197,9 @@ mutation CreateJobCodePropertyTemplate {
         ]
       }
       symbolicName: "JobCode"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The alphanumeric code identifying the employee's job classification in the HR system." }]
+      }
     }
   ) {
     id
@@ -204,7 +221,9 @@ mutation CreateJobLevelPropertyTemplate {
         ]
       }
       symbolicName: "JobLevel"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The grade or seniority level of the job (e.g. Junior, Senior, Principal)." }]
+      }
     }
   ) {
     id
@@ -226,6 +245,9 @@ mutation CreateJobStatusPropertyTemplate {
         ]
       }
       symbolicName: "JobStatus"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Indicates whether the job position is active, on leave, or terminated." }]
+      }
       choiceList: {
         identifier: "{A0EEE560-0000-C5B7-BAA3-C640A012851A}"
       }
@@ -251,6 +273,9 @@ mutation CreateEmploymentTypePropertyTemplate {
         ]
       }
       symbolicName: "EmploymentType"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The nature of the employment contract (e.g. Full-time, Part-time, Contractor, Intern)." }]
+      }
       choiceList: {
         identifier: "{A0EEE570-0000-C196-99D0-5F659493C738}"
       }
@@ -276,6 +301,9 @@ mutation CreateCurrentStatusPropertyTemplate {
         ]
       }
       symbolicName: "CurrentStatus"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The current HR status of the employee (e.g. Active, Inactive, On Leave)." }]
+      }
       choiceList: {
         identifier: "{A0EEE570-0000-C225-A65C-FE2D0BEFDBBF}"
       }
@@ -301,7 +329,9 @@ mutation CreateCompanyPropertyTemplate {
         ]
       }
       symbolicName: "Company"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The legal entity or company name that employs this individual." }]
+      }
     }
   ) {
     id
@@ -323,7 +353,9 @@ mutation CreateCompanyCodePropertyTemplate {
         ]
       }
       symbolicName: "CompanyCode"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The short alphanumeric code identifying the employing legal entity in the ERP system." }]
+      }
     }
   ) {
     id
@@ -345,7 +377,9 @@ mutation CreateBusinessUnitPropertyTemplate {
         ]
       }
       symbolicName: "BusinessUnit"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The business unit within the organisation to which the employee belongs." }]
+      }
     }
   ) {
     id
@@ -367,7 +401,9 @@ mutation CreateDivisionPropertyTemplate {
         ]
       }
       symbolicName: "Division"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The division or sub-organisation within the company to which the employee is assigned." }]
+      }
     }
   ) {
     id
@@ -389,6 +425,9 @@ mutation CreateDepartmentPropertyTemplate {
         ]
       }
       symbolicName: "Department"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The department within the business unit where the employee works." }]
+      }
       choiceList: {
         identifier: "{A0EEE560-0000-C2B3-B7D5-F525F6E24FB0}"
       }
@@ -414,7 +453,9 @@ mutation CreateCostCenterPropertyTemplate {
         ]
       }
       symbolicName: "CostCenter"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The cost centre code to which the employee's costs are allocated for financial reporting." }]
+      }
     }
   ) {
     id
@@ -436,6 +477,9 @@ mutation CreateLocationPropertyTemplate {
         ]
       }
       symbolicName: "Location"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The physical or geographic location where the employee is based." }]
+      }
       choiceList: {
         identifier: "{A0EEE560-0000-C490-A0CA-9F823ED828AB}"
       }
@@ -461,7 +505,9 @@ mutation CreateStartDatePropertyTemplate {
         ]
       }
       symbolicName: "StartDate"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The date on which the employee's current contract or position started." }]
+      }
     }
   ) {
     id
@@ -483,7 +529,9 @@ mutation CreateTerminationDatePropertyTemplate {
         ]
       }
       symbolicName: "TerminationDate"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The date on which the employee's contract or employment ended." }]
+      }
     }
   ) {
     id
@@ -505,7 +553,9 @@ mutation CreateSAPEmployeeIDPropertyTemplate {
         ]
       }
       symbolicName: "SAPEmployeeID"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The employee's personnel number as stored in SAP HR." }]
+      }
     }
   ) {
     id
@@ -527,7 +577,9 @@ mutation CreateSapLinkTriggerPropertyTemplate {
         ]
       }
       symbolicName: "SapLinkTrigger"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Boolean flag that triggers the synchronisation workflow linking this document to the corresponding SAP record." }]
+      }
     }
   ) {
     id
@@ -549,7 +601,9 @@ mutation CreateSapLinkedPropertyTemplate {
         ]
       }
       symbolicName: "sapLinked"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Indicates whether the document has been successfully linked to a SAP record." }]
+      }
     }
   ) {
     id
@@ -571,7 +625,9 @@ mutation CreateSAPDocIdPropertyTemplate {
         ]
       }
       symbolicName: "SAPDocId"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The document identifier assigned by SAP to this object in the ArchiveLink repository." }]
+      }
     }
   ) {
     id
@@ -593,7 +649,9 @@ mutation CreateSAPDocProtPropertyTemplate {
         ]
       }
       symbolicName: "SAPDocProt"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The SAP document protection level indicating the retention and access rights applied by SAP." }]
+      }
     }
   ) {
     id
@@ -615,7 +673,9 @@ mutation CreateSAPCompsPropertyTemplate {
         ]
       }
       symbolicName: "SAPComps"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The list of SAP component identifiers associated with this document." }]
+      }
     }
   ) {
     id
@@ -637,7 +697,9 @@ mutation CreateSAPContTypePropertyTemplate {
         ]
       }
       symbolicName: "SAPContType"
-      
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The SAP content type code that classifies this document within the ArchiveLink content repository." }]
+      }
     }
   ) {
     id
@@ -659,7 +721,9 @@ mutation CreateSAPCompVersionPropertyTemplate {
         ]
       }
       symbolicName: "SAPCompVersion"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The version number of the SAP component associated with this document." }]
+      }
     }
   ) {
     id
@@ -681,7 +745,9 @@ mutation CreateSFLinkTriggerPropertyTemplate {
         ]
       }
       symbolicName: "SFLinkTrigger"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Boolean flag that triggers the synchronisation workflow linking this document to the corresponding Salesforce record." }]
+      }
     }
   ) {
     id
@@ -703,6 +769,9 @@ mutation CreateSfSalesforceRelationshipsPropertyTemplate {
         ]
       }
       symbolicName: "SfSalesforceRelationships"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "Object reference linking this document to one or more related Salesforce records." }]
+      }
       subPropertyTemplateObjectProperties: {
         allowsForeignObject: true
       }
@@ -727,7 +796,9 @@ mutation CreateDocuflowTimestampPropertyTemplate {
         ]
       }
       symbolicName: "docuflowTimestamp"
-    
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The date and time at which the Docuflow process last acted on this document." }]
+      }
     }
   ) {
     id
@@ -749,7 +820,9 @@ mutation CreateDocuflowUsernamePropertyTemplate {
         ]
       }
       symbolicName: "docuflowUsername"
-     
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The username of the Docuflow process or user account that last processed this document." }]
+      }
     }
   ) {
     id
@@ -771,6 +844,9 @@ mutation CreateDocTypePropertyTemplate {
         ]
       }
       symbolicName: "DocType"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The document type label used to classify the kind of HR document (e.g. Contract, Certificate, Evaluation)." }]
+      }
       choiceList: {
         identifier: "{A0EEE560-0000-C1A5-8669-17781FD8045A}"
       }
@@ -796,6 +872,9 @@ mutation CreateDocumentCategoryPropertyTemplate {
         ]
       }
       symbolicName: "DocumentCategory"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The high-level category grouping the document (e.g. Personal, Employment, Training)." }]
+      }
       choiceList: {
         identifier: "{A0EEE570-0000-C3C2-9B99-D7BC15770248}"
       }
@@ -821,6 +900,9 @@ mutation CreateClassDocTypePropertyTemplate {
         ]
       }
       symbolicName: "ClassDocType"
+      descriptiveTexts: {
+        replace: [{ localeName: "en-us", localizedText: "The document type as defined per the class hierarchy, used for routing and classification rules." }]
+      }
       choiceList: {
         identifier: "{A0EEE570-0000-C427-8948-C8BD6322D486}"
       }
