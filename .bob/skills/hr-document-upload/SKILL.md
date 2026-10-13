@@ -136,7 +136,7 @@ Use these human-readable descriptions for each seeded error type:
 Populate the summary columns reflecting the upload batch performed:
 - **Uploaded**: Number of documents uploaded during this run (from `upload_result_{lastname.lower()}.json` or Step 3 stdout).
 - **Already in repo**: Documents that were already in the repository prior to this upload run (from `upload_plan_{lastname.lower()}.json`).
-- **Seeded error**: The intentional classification seed applied to that employee.
+- **Seeded error**: The intentional classification seed for that employee, whether it was applied in this run (`documents`) or already in the repository (`skipped_documents` in `upload_plan_{lastname.lower()}.json`). Never show "—" for an employee whose seeded document was skipped; mark it as "(already in repo)".
 
 If an idempotency verification check is performed afterwards, mention it in a single concluding sentence (e.g. *"Verification confirmed all {Total} documents are present in the repository and subsequent runs will skip them."*) rather than printing a second table showing 0 uploads.
 

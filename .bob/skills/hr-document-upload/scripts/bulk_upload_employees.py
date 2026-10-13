@@ -237,6 +237,7 @@ def generate_upload_plan(lastname, verbose=False):
                     employee_data["skipped_documents"].append({
                         "filename": doc_file.name,
                         "reason": "Already exists in repository",
+                        "seeded_error": check_seeded_error(employee_id, doc_file.name, seeded_errors),
                     })
                     skipped_docs += 1
                     continue
@@ -305,6 +306,12 @@ def print_upload_plan(plan):
         if seeded_docs:
             print(f"   ⚠️  Seeded Errors: {len(seeded_docs)}")
             for doc in seeded_docs:
+                print(f"      - {doc['filename']}: {doc['seeded_error']}")
+
+        existing_seeded = [d for d in emp.get('skipped_documents', []) if d.get('seeded_error')]
+        if existing_seeded:
+            print(f"   ⚠️  Seeded Errors already in repo: {len(existing_seeded)}")
+            for doc in existing_seeded:
                 print(f"      - {doc['filename']}: {doc['seeded_error']}")
 
 def generate_mcp_commands(plan):
